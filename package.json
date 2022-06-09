@@ -35,6 +35,7 @@
     "typescript": "^4.7.3"
   },
   "files": [
-    "lib/**/*"
+    "lib/**/*",
+    "README.md"
   ]
 }
