@@ -3,52 +3,52 @@
  * @param target 水印dom
  */
 class GuardDom {
-  target: HTMLElement
+  target: HTMLElement;
   parent: HTMLElement | null;
   cloneTarget: Node;
   observer: MutationObserver | null;
 
   constructor(target: HTMLElement) {
-    this.target = target
-    this.parent = this.target.parentElement
-    this.cloneTarget = target.cloneNode(true)
-    this.observer = null
+    this.target = target;
+    this.parent = this.target.parentElement;
+    this.cloneTarget = target.cloneNode(true);
+    this.observer = null;
   }
 
   start() {
-    const body = document.body
-    const config = { characterData: true, attributes: true, childList: true, subtree: true }
+    const body = document.body;
+    const config = { characterData: true, attributes: true, childList: true, subtree: true };
 
-    this.observer = new MutationObserver(this._callback)
+    this.observer = new MutationObserver(this._callback);
     if (!this.observer) {
-      throw new Error('守护DOM失败：浏览器不支持MutationObserver')
+      throw new Error('守护DOM失败：浏览器不支持MutationObserver');
     }
-    this.observer.observe(body, config)
-
+    this.observer.observe(body, config);
   }
 
   _callback = (mutationsList: MutationRecord[]) => {
     for (let mutation of mutationsList) {
-      if (mutation.type === 'childList') { // 删除
+      if (mutation.type === 'childList') {
+        // 删除
         mutation.removedNodes.forEach((item) => {
           if (item === this.target) {
-            this._readdDom()
+            this._readdDom();
           }
         });
-      } else if(this.target === mutation.target) { // 修改
-        this._readdDom()
+      } else if (this.target === mutation.target) {
+        // 修改
+        this._readdDom();
       }
-      
     }
-  }
+  };
 
   _readdDom() {
-    const newTarget = this.cloneTarget.cloneNode(true)
+    const newTarget = this.cloneTarget.cloneNode(true);
     this.parent?.appendChild(newTarget);
     // @ts-ignore
-    this.target = newTarget
-    this.observer?.disconnect()
-    this.start()
+    this.target = newTarget;
+    this.observer?.disconnect();
+    this.start();
   }
 }
 
@@ -115,17 +115,17 @@ class WaterMark {
   _setConfig(config: UserWaterMarkConfig) {
     this.config = { ...defaultConfig, ...config };
     if (this.config.model === WaterMarkModel.online) {
-      console.log('在线安全模式')
+      console.log('在线安全模式');
       // TODO1: 通过systemId和userId生成新的水印文字text
       if (!config.text) {
-        this.config.text = '模拟水印'
+        this.config.text = '模拟水印';
       }
       // TODO2: 水印dom被改变时候请求安全接口
     } else {
-      console.log('离线简单模式水印')
+      console.log('离线简单模式水印');
     }
   }
-  
+
   // 创建单个的水印图片
   _createSingleImg() {
     // 创建画布
@@ -171,13 +171,13 @@ class WaterMark {
     this.watermakr.style.left = '0px';
     this.watermakr.style.pointerEvents = 'none';
     this.watermakr.style.backgroundRepeat = 'repeat';
-    this.config.containerEl.style.position = 'relative'
+    this.config.containerEl.style.position = 'relative';
     this.config.containerEl.appendChild(this.watermakr);
   }
 
   _observeWaterMark() {
-    const observe = new GuardDom(this.watermakr)
-    observe.start()
+    const observe = new GuardDom(this.watermakr);
+    observe.start();
   }
 
   // 获取水印文字的长宽
