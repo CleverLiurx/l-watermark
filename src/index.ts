@@ -27,7 +27,7 @@ class GuardDom {
   }
 
   _callback = (mutationsList: MutationRecord[]) => {
-    for (let mutation of mutationsList) {
+    for (const mutation of mutationsList) {
       if (mutation.type === 'childList') {
         // 删除
         mutation.removedNodes.forEach((item) => {
@@ -115,26 +115,23 @@ class WaterMark {
   _setConfig(config: UserWaterMarkConfig) {
     this.config = { ...defaultConfig, ...config };
     if (this.config.model === WaterMarkModel.online) {
-      console.log('在线安全模式');
       // TODO1: 通过systemId和userId生成新的水印文字text
       if (!config.text) {
         this.config.text = '模拟水印';
       }
       // TODO2: 水印dom被改变时候请求安全接口
-    } else {
-      console.log('离线简单模式水印');
-    }
+    } else { }
   }
 
   // 创建单个的水印图片
   _createSingleImg() {
     // 创建画布
-    let canvas = document.createElement('canvas');
+    const canvas = document.createElement('canvas');
     // 绘制文字环境
-    let context = canvas.getContext('2d');
+    const context = canvas.getContext('2d');
     if (context) {
       // 获取字体宽度
-      let { width, height } = this._getTextSize(this.config.text, this.config.fontSize);
+      const { width, height } = this._getTextSize(this.config.text, this.config.fontSize);
       // 画布宽度
       canvas.width = width + this.config.cSpace;
       // 画布高度
@@ -182,14 +179,14 @@ class WaterMark {
 
   // 获取水印文字的长宽
   _getTextSize(text: string, fontSize: number) {
-    let span = document.createElement('span');
-    let result: { width: number; height: number } = { width: 0, height: 0 };
+    const span = document.createElement('span');
+    const result: { width: number; height: number } = { width: 0, height: 0 };
     result.width = span.offsetWidth;
     result.height = span.offsetWidth;
     span.style.visibility = 'hidden';
     span.style.fontSize = fontSize + 'px';
     document.body.appendChild(span);
-    if (typeof span.textContent != 'undefined') {
+    if (typeof span.textContent !== 'undefined') {
       span.textContent = text;
     } else {
       span.innerText = text;
