@@ -120,7 +120,7 @@ class WaterMark {
         this.config.text = '模拟水印';
       }
       // TODO2: 水印dom被改变时候请求安全接口
-    } else { }
+    }
   }
 
   // 创建单个的水印图片
