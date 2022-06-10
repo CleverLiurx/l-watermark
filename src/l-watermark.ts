@@ -145,4 +145,7 @@ class WaterMark {
   }
 }
 
+// @ts-ignore
+window.WaterMark = WaterMark
+
 export default WaterMark
