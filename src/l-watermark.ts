@@ -126,7 +126,8 @@ class WaterMark {
 
   // 获取水印文字的长宽
   _getTextSize(text: string, fontSize: number) {
-    const span = document.createElement('span')
+    const span =
+     document.createElement('span')
     const result: { width: number; height: number } = { width: 0, height: 0 }
     result.width = span.offsetWidth
     result.height = span.offsetWidth
