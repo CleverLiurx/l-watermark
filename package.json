@@ -19,7 +19,7 @@
     "node": ">=6.0.0"
   },
   "scripts": {
-    "lint": "tslint -p tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
+    "lint": "tslint -p tsconfig.json -t codeFrame 'src/**/*.ts'",
     "prebuild": "rimraf dist",
     "build": "tsc && rollup -c rollup.config.ts && typedoc",
     "start": "rollup -c rollup.config.ts -w",
@@ -27,6 +27,7 @@
     "test:watch": "jest --coverage --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "deploy-docs": "ts-node tools/gh-pages-publish",
+    "format": "prettier --write \"src/**/*.ts\"",
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
