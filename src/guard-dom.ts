@@ -7,9 +7,11 @@ class GuardDom {
   parent: HTMLElement | null
   cloneTarget: Node
   observer: MutationObserver | null
+  cb: Function
 
-  constructor(target: HTMLElement) {
+  constructor(target: HTMLElement, cb: Function) {
     this.target = target
+    this.cb = cb
     this.parent = this.target.parentElement
     this.cloneTarget = target.cloneNode(true)
     this.observer = null
@@ -32,11 +34,13 @@ class GuardDom {
         // 删除
         mutation.removedNodes.forEach((item) => {
           if (item === this.target) {
+            this.cb()
             this._readdDom()
           }
         })
       } else if (this.target === mutation.target) {
         // 修改
+        this.cb()
         this._readdDom()
       }
     }
