@@ -60,16 +60,16 @@ class ImageWaterMark {
         const wmWidth = textWith + cSpace // 单个水印文字占的宽度
         const wmHeight = textWith + vSpace // 单个水印文字占的高度
         ctx.translate(width / 2, height / 2)
-        let w = - width / 2
-        let h = - height / 2
-        while(h < height / 2) {
-          while(w < width / 2) {
+        let w = -width / 2
+        let h = -height / 2
+        while (h < height / 2) {
+          while (w < width / 2) {
             ctx.rotate((Math.PI / 180) * angle)
             ctx.fillText(text, w, h)
-            ctx.rotate(- (Math.PI / 180) * angle)
+            ctx.rotate(-(Math.PI / 180) * angle)
             w += wmWidth
           }
-          w = - width / 2
+          w = -width / 2
           h += wmHeight
         }
         break
@@ -99,7 +99,6 @@ class ImageWaterMark {
         ctx.fillText(text, 0 + cSpace, height - vSpace)
         break
     }
-
   }
 
   // 获取水印文字的长宽

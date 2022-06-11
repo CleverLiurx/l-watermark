@@ -1,4 +1,3 @@
-
 export interface PageWaterMarkConfig {
   text: string // 水印文字
   containerEl: HTMLElement // 添加水印的目标元素

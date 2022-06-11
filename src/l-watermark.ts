@@ -2,16 +2,15 @@ import {
   PageWaterMarkConfig,
   UserPageWaterMarkConfig,
   ImageWaterMarkConfig,
-  UserImageWaterMarkConfig
+  UserImageWaterMarkConfig,
 } from './ts-type'
 import PageWaterMark from './page'
 import ImageWaterMark from './image'
 
-
 const defaultPageConfig: PageWaterMarkConfig = {
   containerEl: document.body,
   text: '默认水印',
-  onchange: () => {},
+  onchange: () => console.log('水印被改变'),
   color: 'rgba(0, 0, 0, 0.15)',
   fontSize: 24,
   zIndex: '10000',
@@ -29,23 +28,22 @@ const defaultImageConfig: ImageWaterMarkConfig = {
   cSpace: 0,
   vSpace: 0,
   angle: -25,
-  success: () => {}
+  success: () => console.log('图片水印添加成功'),
 }
 
 class WaterMark {
-
   static image(config: UserImageWaterMarkConfig) {
-    const configs = WaterMark._initImageConfig(config);
-    new ImageWaterMark(configs)
+    const configs = WaterMark._initImageConfig(config)
+    return new ImageWaterMark(configs)
   }
 
   static page(config: UserPageWaterMarkConfig) {
     const configs = WaterMark._initPageConfig(config)
-    new PageWaterMark(configs)
+    return new PageWaterMark(configs)
   }
 
   static video() {
-    throw new Error("暂不支持视频添加水印功能，敬请期待！")
+    throw new Error('暂不支持视频添加水印功能，敬请期待！')
   }
 
   // 初始WEB页面水印配置
