@@ -1,5 +1,5 @@
 import GuardDom from './guard-dom'
-import { PageWaterMarkConfig } from './ts-type'
+import { PageWaterMarkConfig } from './interface'
 
 class PageWaterMark {
   singleImg: string = ''
@@ -8,12 +8,12 @@ class PageWaterMark {
 
   constructor(config: PageWaterMarkConfig) {
     this.config = config
-    this._createSingleImg() // 创建一个水印文字图片
-    this._addWaterMark() // 将水印文字图片重复平铺到容器
-    this._observeWaterMark(this.config.onchange) // 监视水印不被改变
+    this.createSingleWatermarkImage()
+    this.repeatWatermark2Container()
+    this.observeWaterMark()
   }
-  // 创建单个的水印图片
-  _createSingleImg() {
+  // 创建一个的水印图片
+  createSingleWatermarkImage() {
     // 创建画布
     const canvas = document.createElement('canvas')
     // 绘制文字环境
@@ -46,8 +46,8 @@ class PageWaterMark {
     this.singleImg = canvas.toDataURL()
   }
 
-  // 添加水印
-  _addWaterMark() {
+  // 将水印文字图片重复平铺到容器
+  repeatWatermark2Container() {
     this.watermakr.className = 'l-watermark'
     this.watermakr.style.backgroundImage = `url(${this.singleImg})`
     this.watermakr.style.position = this.config.containerEl === document.body ? 'fixed' : 'absolute'
@@ -62,9 +62,9 @@ class PageWaterMark {
     this.config.containerEl.appendChild(this.watermakr)
   }
 
-  // 监测水印
-  _observeWaterMark(cb: Function) {
-    const observe = new GuardDom(this.watermakr, cb)
+  // 监视水印不被改变
+  observeWaterMark() {
+    const observe = new GuardDom(this.watermakr, this.config.onchange)
     observe.start()
   }
 

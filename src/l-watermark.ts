@@ -3,7 +3,7 @@ import {
   UserPageWaterMarkConfig,
   ImageWaterMarkConfig,
   UserImageWaterMarkConfig,
-} from './ts-type'
+} from './interface'
 import PageWaterMark from './page'
 import ImageWaterMark from './image'
 
@@ -32,36 +32,23 @@ const defaultImageConfig: ImageWaterMarkConfig = {
 }
 
 class WaterMark {
+  constructor() {
+    throw new Error('实例化水印错误：请调用WaterMark的静态方法(page/image/video)进行加载水印！')
+  }
+
   static image(config: UserImageWaterMarkConfig) {
-    const configs = WaterMark._initImageConfig(config)
+    const configs: ImageWaterMarkConfig = { ...defaultImageConfig, ...config }
     return new ImageWaterMark(configs)
   }
 
   static page(config: UserPageWaterMarkConfig) {
-    const configs = WaterMark._initPageConfig(config)
+    const configs: PageWaterMarkConfig = { ...defaultPageConfig, ...config }
     return new PageWaterMark(configs)
   }
 
   static video() {
     throw new Error('暂不支持视频添加水印功能，敬请期待！')
   }
-
-  // 初始WEB页面水印配置
-  static _initPageConfig(config: UserPageWaterMarkConfig) {
-    // TODO
-    const configs: PageWaterMarkConfig = { ...defaultPageConfig, ...config }
-    return configs
-  }
-
-  // 初始图片水印配置
-  static _initImageConfig(config: UserImageWaterMarkConfig) {
-    // TODO
-    const configs: ImageWaterMarkConfig = { ...defaultImageConfig, ...config }
-    return configs
-  }
 }
-
-// @ts-ignore
-window.WaterMark = WaterMark
 
 export default WaterMark

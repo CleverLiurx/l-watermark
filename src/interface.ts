@@ -23,8 +23,8 @@ export interface UserPageWaterMarkConfig {
 }
 
 export interface ImageWaterMarkConfig {
-  target?: HTMLImageElement
-  url?: string
+  target?: HTMLImageElement // img标签
+  url?: string // 图片url/base64
   text: string // 水印文字
   secret: boolean // 开启暗水印
   position: string // repeat center bottomRight bottomLeft topLeft topRight
@@ -33,7 +33,7 @@ export interface ImageWaterMarkConfig {
   cSpace: number // 水印横向间距
   vSpace: number // 水印纵向间距
   angle: number // 水印旋转角度
-  success: Function
+  success: Function // 回调用
 }
 
 export interface UserImageWaterMarkConfig {

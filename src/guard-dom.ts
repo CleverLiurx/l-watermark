@@ -4,17 +4,16 @@
  */
 class GuardDom {
   target: HTMLElement
-  parent: HTMLElement | null
+  parent: HTMLElement
   cloneTarget: Node
-  observer: MutationObserver | null
+  observer!: MutationObserver
   cb: Function
 
   constructor(target: HTMLElement, cb: Function) {
     this.target = target
     this.cb = cb
-    this.parent = this.target.parentElement
-    this.cloneTarget = target.cloneNode(true)
-    this.observer = null
+    this.parent = <HTMLElement>this.target.parentElement
+    this.cloneTarget = <HTMLElement>target.cloneNode(true)
   }
 
   start() {
@@ -47,11 +46,10 @@ class GuardDom {
   }
 
   _readdDom() {
-    const newTarget = this.cloneTarget.cloneNode(true)
-    this.parent?.appendChild(newTarget)
-    // @ts-ignore
+    const newTarget = <HTMLElement>this.cloneTarget.cloneNode(true)
+    this.parent.appendChild(newTarget)
     this.target = newTarget
-    this.observer?.disconnect()
+    this.observer.disconnect()
     this.start()
   }
 }

@@ -1,13 +1,5 @@
-import { ImageWaterMarkConfig } from './ts-type'
-// source: HTMLImageElement | string // <img> / url / base64
-// text: string // 水印文字
-// secret: boolean // 开启暗水印
-// position: string // repeat center bottomRight bottomLeft topLeft topRight
-// color: string // 水印字体颜色rgba
-// fontSize: number // 水印字体大小
-// cSpace: number // 水印横向间距
-// vSpace: number // 水印纵向间距
-// angle: number // 水印旋转角度
+import { ImageWaterMarkConfig } from './interface'
+
 class ImageWaterMark {
   config: ImageWaterMarkConfig
 
@@ -16,7 +8,37 @@ class ImageWaterMark {
     this.init()
   }
 
-  _editImage(img: HTMLImageElement, src: string) {
+  init() {
+    // TODO: 待完善容错处理
+    const oldImgSrc = this.config.target?.src
+    const url = this.config.url
+    let src = ''
+
+    if (!oldImgSrc && !url) {
+      throw new Error('水印添加失败：target和url不能全为空！')
+    }
+
+    const img = new Image()
+    img.setAttribute('crossorigin', 'crossorigin')
+
+    if (oldImgSrc && url) {
+      // url转换成img -> img加水印 -> img替换target
+      src = url
+    }
+    if (!oldImgSrc && url) {
+      // url转换成img -> img加水印 -> 返回img的base64
+      src = url
+    }
+    if (oldImgSrc && !url) {
+      // targe加水印 -> 替换原target
+      src = oldImgSrc
+    }
+
+    this._addWatermark(img, src)
+  }
+
+  // 图片添加水印
+  _addWatermark(img: HTMLImageElement, src: string) {
     img.src = src
     img.onload = () => {
       // 创建画布
@@ -30,7 +52,7 @@ class ImageWaterMark {
         // 图片添加到canvas
         ctx.drawImage(img, 0, 0, width, height)
         // 水印添加到cancas
-        this._addWatermrk2Ctx(ctx, width, height)
+        this._text2canvas(ctx, width, height)
         // canvas转换成base64
         const base64 = canvas.toDataURL()
         // 替换原dom
@@ -46,7 +68,8 @@ class ImageWaterMark {
     }
   }
 
-  _addWatermrk2Ctx(ctx: CanvasRenderingContext2D, width: number, height: number) {
+  // 水印文本添加到canvas
+  _text2canvas(ctx: CanvasRenderingContext2D, width: number, height: number) {
     const { position, color, fontSize, cSpace, vSpace, angle, text } = this.config
 
     ctx.font = `${fontSize}px microsoft yahei`
@@ -56,20 +79,23 @@ class ImageWaterMark {
       case 'repeat':
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
-        const { width: textWith, height: textHeight } = this._getTextSize(text, fontSize)
+        const { width: textWith } = this._getTextSize(text, fontSize)
         const wmWidth = textWith + cSpace // 单个水印文字占的宽度
         const wmHeight = textWith + vSpace // 单个水印文字占的高度
         ctx.translate(width / 2, height / 2)
-        let w = -width / 2
-        let h = -height / 2
-        while (h < height / 2) {
-          while (w < width / 2) {
-            ctx.rotate((Math.PI / 180) * angle)
+        ctx.rotate((Math.PI / 180) * angle)
+
+        const diagonal = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2))
+
+        let w = -diagonal / 2
+        let h = -diagonal / 2
+
+        while (h < diagonal / 2) {
+          while (w < diagonal / 2) {
             ctx.fillText(text, w, h)
-            ctx.rotate(-(Math.PI / 180) * angle)
             w += wmWidth
           }
-          w = -width / 2
+          w = -diagonal / 2
           h += wmHeight
         }
         break
@@ -101,7 +127,7 @@ class ImageWaterMark {
     }
   }
 
-  // 获取水印文字的长宽
+  // 获取文字的长宽
   _getTextSize(text: string, fontSize: number) {
     const span = document.createElement('span')
     const result: { width: number; height: number } = { width: 0, height: 0 }
@@ -119,35 +145,6 @@ class ImageWaterMark {
     result.height = span.offsetHeight - result.height
     span.parentNode?.removeChild(span)
     return result
-  }
-
-  init() {
-    // TODO: 待完善容错处理
-    const oldImgSrc = this.config.target?.src
-    const url = this.config.url
-    let src = ''
-
-    if (!oldImgSrc && !url) {
-      throw new Error('水印添加失败：target和url不能全为空！')
-    }
-
-    const img = new Image()
-    img.setAttribute('crossorigin', 'crossorigin')
-
-    if (oldImgSrc && url) {
-      // url转换成img -> img加水印 -> img替换target
-      src = url
-    }
-    if (!oldImgSrc && url) {
-      // url转换成img -> img加水印 -> 返回img的base64
-      src = url
-    }
-    if (oldImgSrc && !url) {
-      // targe加水印 -> 替换原target
-      src = oldImgSrc
-    }
-
-    this._editImage(img, src)
   }
 }
 
