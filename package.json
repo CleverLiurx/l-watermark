@@ -1,6 +1,6 @@
 {
   "name": "l-watermark",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "",
   "keywords": [],
   "main": "dist/l-watermark.umd.js",
