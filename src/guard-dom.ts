@@ -12,8 +12,8 @@ class GuardDom {
   constructor(target: HTMLElement, cb: Function) {
     this.target = target
     this.cb = cb
-    this.parent = <HTMLElement>this.target.parentElement
-    this.cloneTarget = <HTMLElement>target.cloneNode(true)
+    this.parent = this.target.parentElement as HTMLElement
+    this.cloneTarget = target.cloneNode(true) as HTMLElement
   }
 
   start() {
@@ -46,7 +46,7 @@ class GuardDom {
   }
 
   _readdDom() {
-    const newTarget = <HTMLElement>this.cloneTarget.cloneNode(true)
+    const newTarget = this.cloneTarget.cloneNode(true) as HTMLElement
     this.parent.appendChild(newTarget)
     this.target = newTarget
     this.observer.disconnect()
