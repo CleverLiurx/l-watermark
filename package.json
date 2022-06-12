@@ -1,6 +1,6 @@
 {
   "name": "l-watermark",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "A web watermark SDK, support: custom watermark content and style, watermark encryption and decryption, watermark anomaly monitoring, etc. ",
   "keywords": [
     "watermark",
