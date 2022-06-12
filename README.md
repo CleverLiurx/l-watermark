@@ -1,3 +1,5 @@
+**English Document Address：**https://github.com/CleverLiurx/l-watermark/blob/master/README-en.md
+
 # 一、什么是l-watermark？
 
 `l-watermark` 是一个基于TS的水印SDK，它包含：
