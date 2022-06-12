@@ -1,7 +1,7 @@
 export interface PageWaterMarkConfig {
   text: string // 水印文字
   containerEl: HTMLElement // 添加水印的目标元素
-  onchange: Function
+  onchange?: Function
   color: string // 水印字体颜色rgba
   fontSize: number // 水印字体大小
   zIndex: string // 层级
@@ -33,7 +33,7 @@ export interface ImageWaterMarkConfig {
   cSpace: number // 水印横向间距
   vSpace: number // 水印纵向间距
   angle: number // 水印旋转角度
-  success: Function // 回调用
+  success?: Function // 回调用
 }
 
 export interface UserImageWaterMarkConfig {

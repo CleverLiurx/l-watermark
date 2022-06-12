@@ -10,7 +10,6 @@ import ImageWaterMark from './image'
 const defaultPageConfig: PageWaterMarkConfig = {
   containerEl: document.body,
   text: '默认水印',
-  onchange: () => console.log('水印被改变'),
   color: 'rgba(0, 0, 0, 0.15)',
   fontSize: 24,
   zIndex: '10000',
@@ -28,7 +27,6 @@ const defaultImageConfig: ImageWaterMarkConfig = {
   cSpace: 0,
   vSpace: 0,
   angle: -25,
-  success: () => console.log('图片水印添加成功'),
 }
 
 class WaterMark {

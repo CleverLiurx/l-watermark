@@ -7,9 +7,9 @@ class GuardDom {
   parent: HTMLElement
   cloneTarget: Node
   observer!: MutationObserver
-  cb: Function
+  cb: Function | undefined
 
-  constructor(target: HTMLElement, cb: Function) {
+  constructor(target: HTMLElement, cb: Function | undefined) {
     this.target = target
     this.cb = cb
     this.parent = this.target.parentElement as HTMLElement
@@ -33,13 +33,13 @@ class GuardDom {
         // 删除
         mutation.removedNodes.forEach((item) => {
           if (item === this.target) {
-            this.cb()
+            this.cb && this.cb()
             this._readdDom()
           }
         })
       } else if (this.target === mutation.target) {
         // 修改
-        this.cb()
+        this.cb && this.cb()
         this._readdDom()
       }
     }

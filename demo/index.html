@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>l-watermark</title>
+    <style>
+      #top-container {
+        margin: 0;
+        padding: 0;
+        line-height: 96vh;
+        text-align: center;
+        font-size: 40px;
+      }
+      #demo-image {
+        width: 98vw;
+        height: 780px;
+      }
+    </style>
+  </head>
+  <body>
+    <img id="demo-image" src="./demo-image.png" alt="" />
+    <div id="top-container" style="height: 96vh; background-color: beige"></div>
+    <div id="bottom-container" style="height: 48vh; background-color: bisque"></div>
+    <script src="https://unpkg.com/l-watermark@0.1.1/dist/l-watermark.umd.js"></script>
+    <script>
+      /**
+       * Image WaterMark
+       */
+
+      // demo 1
+      // WaterMark.image({
+      //   target: document.getElementById('demo-image'),
+      //   cSpace: 50,
+      //   vSpace: 30,
+      //   text: 'Banned Gaiden',
+      //   color: 'rgba(0,0,0,0.6)',
+      //   fontSize: 30,
+      // })
+
+      // demo 2
+      // WaterMark.image({
+      //   position: 'bottomRight',
+      //   target: document.getElementById('demo-image'),
+      //   cSpace: 20,
+      //   vSpace: 20,
+      //   text: '@ GitHub - CleverLiurx',
+      //   color: 'rgba(87, 8, 235, 1)',
+      //   fontSize: 40,
+      // })
+
+      // demo 3
+      // WaterMark.image({
+      //   target: document.getElementById('demo-image'),
+      //   /**
+      //    * If you don't have an <img> label
+      //    * You can use the option "url" instead of "target"
+      //    * The url can be a web image address or a base64
+      //    * Then use the SUCCESS callback function to accept base64 of the watermarked image
+      //    * For example：
+      //    * url: "http://example.com/image/xxx.pnng",
+      //    * url: "data:image/png;base64,iVBORw0KG..."
+      //    * Note: When both URL and target are configured, the watermarked image of the "url" will be replaced by "target.src"
+      //    */
+      //   text: 'To base64',
+      //   cSpace: 100,
+      //   success: (data) => console.log(data),
+      // })
+
+      /**
+       * Page WaterMark
+       */
+
+      // demo 4
+      // WaterMark.page({})
+
+      // demo 5
+      // WaterMark.page({
+      //   text: 'Confidential Paper',
+      //   color: 'rgba(0,0,0,0.08)',
+      //   cSpace: 100,
+      // })
+
+      // demo 6
+      // WaterMark.page({
+      //   containerEl: document.getElementById('top-container'),
+      //   text: 'Secret Content',
+      // })
+      // WaterMark.page({
+      //   containerEl: document.getElementById('bottom-container'),
+      //   text: 'GitHub',
+      //   angle: 0,
+      //   cSpace: 120,
+      //   vSpace: 10,
+      //   fontSize: 30,
+      // })
+    </script>
+  </body>
+</html>

@@ -60,7 +60,7 @@ class ImageWaterMark {
           this.config.target.src = base64
         }
         // 执行success回掉
-        this.config.success(base64)
+        this.config.success && this.config.success(base64)
       }
     }
     img.onerror = () => {
