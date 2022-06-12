@@ -84,7 +84,7 @@ WaterMark.image({
 })
 ```
 
-![page-demo-1](/Users/didi/Desktop/page-demo-1.png)
+![image-demo-1](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-1.png)
 
 ### 3.2.2 给图片添加铺满的图片水印
 
