@@ -1,178 +1,187 @@
-# What is l-watermark？
+# 一、什么是l-watermark？
 
-`l-watermark` is a watermark SDK that supports TS, including:
+`l-watermark` 是一个基于TS的水印SDK，它包含：
 
-- Add a watermark to `web page` or `image`
-- Customize the content and style of watermark
-- Monitor watermarks to prevent tampering and deletion
-- Provide hooks: You can send the userId to the server when watermarking is abnormal
-- Add a `hidden watermark` to the image
+- 能够覆盖多场景的水印添加方法
+  1. 给`网页`添加`文字/图片`水印
+  2. 给`图片`添加`文字/图片`水印
+  3. 给图片添加暗水印（将在下一版本上线）
+- 守护水印不被篡改和删除
+- 提供多种钩子函数
+  1. onchange: 用户试图篡改或删除水印时的回调，你在此时获取用户id并上报给服务器
+  2. onerror: 水印添加失败时的回调
+  3. success: 水印添加成功时的回调
+- 自定义水印样式
+  1. 自定义颜色、字体大小、层级、间距、透明度等
+  2. 自定义图片中水印的位置：铺满、中间、左上角、右下角等
 
-# DEMO
+# 二、安装
 
-See: https://github.com/CleverLiurx/l-watermark/blob/master/demo/index.html
+## 2.1 npm
 
-# Install
+推荐使用 `npm 方式安装最新版
 
-## npm
-
-`npm` installation is recommended
-
-```shell
+```bash
 npm install l-watermark
 ```
 
-## CDN
-
-You can obtain the latest version of the resource through "unpkg.com/l-watermark", and introduce the `js` file on the page to start using it.
-
-```html
-<script src="https://unpkg.com/l-watermark@0.1.2/dist/l-watermark.umd.js"></script>
+```js
+import WaterMark from "l-watermark"
 ```
 
-# Usage
+## 2.2 CDN
 
-## Add watermarks to web pages
-
-1. Simplest: add watermarks to all pages
+你可以通过 **unpkg.com/l-watermark** 来获取 Js SDK，然后在合适的位置引入即可
 
 ```js
-WaterMark.page({})
+<script src="https://unpkg.com/l-watermark@1.0.0/dist/l-watermark.umd.js"></script>
 ```
 
-![default-page-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/default-page-wm.png)
+# 三、使用示例
 
-2. Make the watermark more beautiful
+## 3.1 给WEB页面添加水印
+
+### 3.1.1 给页面添加文字水印
 
 ```js
 WaterMark.page({
-  text: "Confidential Paper",
-  color: "rgba(0,0,0,0.08)",
-  cSpace: 100
+  containerEl: document.body,
+  text: "Internal Data",
+  color: "rgba(0, 0, 0, 0.4)",
+  fontSize: 24
 })
 ```
 
-![diy-page-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/diy-page-wm.png)
+![page-demo-1](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/page-demo-1.png)
 
-3. Add different watermarks for different areas
+### 3.1.2 给页面添加图片水印
 
 ```js
 WaterMark.page({
-  containerEl: document.getElementById("top-container"),
-  text: "Secret Content"
-})
-WaterMark.page({
-  containerEl: document.getElementById("bottom-container"),
-  text: "GitHub",
-  angle: 0,
-  cSpace: 120,
-  vSpace: 10,
-  fontSize: 30
+  containerEl: document.body,
+  image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
+  cSpace: 20,
+  vSpace: 50
 })
 ```
 
-![two-container-diff-page-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/two-container-diff-page-wm.png)
+![page-demo-2](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/page-demo-2.png)
 
-## Add a watermark to the image
+## 3.2 给图片添加水印
 
-1. Add a watermark to the `img` element
+### 3.2.1 给图片添加铺满的文字水印
 
 ```js
 WaterMark.image({
-  target: document.getElementById("demo-image"),
-  cSpace: 50,
+  target: document.getElementById('demo-image'),
+  text: 'Angelababy',
+  cSpace: 100,
   vSpace: 30,
-  text: "Banned Gaiden",
-  color: "rgba(0,0,0,0.6)",
-  fontSize: 30,
+  color: 'rgba(0,0,0,0.6)',
+  fontSize: 70,
 })
 ```
 
-![default-image-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/default-image-wm.png)
+![page-demo-1](/Users/didi/Desktop/page-demo-1.png)
 
-2. Adds a watermark at the specified location
+### 3.2.2 给图片添加铺满的图片水印
 
 ```js
 WaterMark.image({
+  target: document.getElementById('demo-image'),
+  image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
+  cSpace: 20,
+  vSpace: 20
+})
+```
+
+![image-demo-2](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-2.png)
+
+### 3.2.3 给图片添加指定位置的文字/图片水印
+
+```js
+WaterMark.image({
+  target: document.getElementById('demo-image'),
   position: "bottomRight",
-  target: document.getElementById("demo-image"),
+  text: '@ GitHub - CleverLiurx',
+  color: 'rgba(255, 0, 0, 1)',
+  fontSize: 80,
   cSpace: 20,
   vSpace: 20,
-  text: "@ GitHub - CleverLiurx",
-  color: "rgba(87, 8, 235, 1)",
-  fontSize: 40,
 })
 ```
 
-![position-image-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/position-image-wm.png)
-
-3. Ges `base64` with a watermarked image
+![image-demo-3](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-3.png)
 
 ```js
 WaterMark.image({
-  target: document.getElementById("demo-image"),
-  /**
-   * If you don't have an <img> label
-   * You can use the option "url" instead of "target"
-   * The url can be a web image address or a base64
-   * Then use the SUCCESS callback function to accept base64 of the watermarked image
-   * For example：
-   * url: "http://example.com/image/xxx.pnng",
-   * url: "data:image/png;base64,iVBORw0KG..."
-   * Note: When both URL and target are configured, the watermarked image of the "url" will be replaced by "target.src"
-   */
-  text: "To base64",
-  cSpace: 100,
-  success: data => console.log(data)
+  target: document.getElementById('demo-image'),
+  position: "topLeft",
+  image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
+  cSpace: 20,
+  vSpace: 20,
 })
 ```
 
-![base64-image-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/base64-image-wm.png)
+![image-demo-4](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-4.png)
 
-4. Add "Hidden Watermark" to the image
+## 3.2.4 获取加了水印的图片的base64
 
-**This feature will be updated in the next version**
+没有配置 `targe`，页面不会有任何变化，如果同时配置了 `target` 和 `url`，**会把 url 添加水印的图片后替换 target**
 
-![preload](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/0232071584c8c353536eb607235b1e61.jpeg)
+```js
+WaterMark.image({
+  url: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/ab-v1.0.0-demo.png", // 网络地址或base64
+  text: 'Angelababy',
+  cSpace: 100,
+  success: (data) => console.log(data),
+})
+```
 
-# Config
+![image-demo-5](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-5.png)
 
-## WaterMark.page
+# 配置
 
-****
-
-| Options     | Default             | Explain                                                      | Type        |
-| ----------- | ------------------- | ------------------------------------------------------------ | ----------- |
-| text        | 默认水印            | watermark text                                               | string      |
-| containerEl | document.body       | the container of watermark                                   | HTMLElement |
-| color       | rgba(0, 0, 0, 0.15) | css: color                                                   | string      |
-| fontSize    | 24                  | css: font-size                                               | number      |
-| zIndex      | 10000               | css: z-index                                                 | string      |
-| cSpace      | 0                   | crosswise spacing                                            | number      |
-| vSpace      | 0                   | vertical spacing                                             | number      |
-| angle       | -25                 | rotation angle                                               | number      |
-| onchange    | () => {}            | callback function when the watermark is tampered with or deleted | Function    |
-
-## WaterMark.image
+## 页面加水印 WaterMark.page
 
 ****
 
-| Options  | Default             | Explain                                                      | Type             |
-| -------- | ------------------- | ------------------------------------------------------------ | ---------------- |
-| text     | 水印                | watermark text                                               | string           |
-| target   |                     | the target element of the watermark                          | HTMLImageElement |
-| color    | rgba(0, 0, 0, 0.15) | css: color                                                   | string           |
-| fontSize | 24                  | css: font-size                                               | number           |
-| position | repeat              | position of watermark: repeat \| center \| bottomRight \| bottomLeft \| topLeft \| topRight | string           |
-| cSpace   | 0                   | crosswise spacing                                            | number           |
-| vSpace   | 0                   | vertical spacing                                             | number           |
-| angle    | -25                 | rotation angle（It only works when `position: repeat`. In other cases, the default value of angle is 0） | number           |
-| success  | (base64) => {}      | The callback function when watermark is successfully added, the parameter is base64 for the image | Function         |
-| url      |                     | a web image address or a base64                              | string           |
+| Options     | Default             | Explain                                | Type                  |
+| ----------- | ------------------- | -------------------------------------- | --------------------- |
+| text        | 默认水印            | 水印文本（与image二选一）              | string                |
+| image       |                     | 水印图片（与text二选一）               | string（url\|base64） |
+| containerEl | document.body       | 添加水印的元素                         | HTMLElement           |
+| color       | rgba(0, 0, 0, 0.15) | 颜色（图片水印时无效）                 | string                |
+| fontSize    | 24                  | 字体大小（图片水印时无效）             | number                |
+| zIndex      | 10000               | 水印的层级                             | string                |
+| cSpace      | 0                   | 单个水印间的横向间距                   | number                |
+| vSpace      | 0                   | 单个水印间的纵向间距                   | number                |
+| angle       | -25                 | 水印文本的旋转角度（图片水印时无效）   | number                |
+| onchange    |                     | 水印被篡改或删除时的钩子               | Function              |
+| onerror     |                     | 添加水印发生错误的钩子(参数为错误信息) | Function              |
+| success     |                     | 水印添加成功后的钩子                   | Function              |
 
-**About `target` and `url`：**
+## 图片加水印 WaterMark.image
 
-1. At least one target and URL cannot be empty
-2. When both `url` and `target` are configured, the watermarked image of the `url` will be replaced by `target.src`
-3. If the `target` exists, the `url` does not exist, a watermark is added to the target
-4. If the  `target` does not exist, the `url` exists, the page does not change, but you can use the `SUCCESS callback function` to accept base64 of the watermarked image
+****
+
+| Options  | Default             | Explain                                                      | Type                                                         |
+| -------- | ------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| text     | 默认水印            | 水印文本（与image二选一）                                      | string                                                       |
+| image |                     | 水印图片（与text二选一） | string（url\|base64） |
+| target   |                     | 要加水印的目标                                          | HTMLImageElement                                             |
+| url      |                     | 图片的地址或base64（详细信息见文末）                                | string(url\|base64)                                          |
+| color    | rgba(0, 0, 0, 0.15) | 颜色（图片水印时无效）                                       | string                                                       |
+| fontSize | 24                  | 字体大小（图片水印时无效）                                   | number                                                       |
+| position | repeat              | 水印的位置（默认repeat，铺满；其他选项在指定位置添加一个水印） | string(repeat \|center \|bottomRight \|bottomLeft \|topLeft \|topRight) |
+| cSpace   | 0                   | 单个水印间的横向间距                                         | number                                                       |
+| vSpace   | 0                   | 单个水印间的纵向间距                                         | number                                                       |
+| angle    | -25                 | 水印文本的旋转角度（图片水印时无效）                         | number                                                       |
+| success  |                     | 水印添加成功后的钩子（参数为添加水印后的图片的base64）       | Function                                                     |
+| onerror     |                     | 添加水印发生错误的钩子(参数为错误信息) | Function              |
+
+**注意：**
+
+- 如果同时配置了 `target` 和 `url`，会把 url 转换成图片，然后添加水印，最后替换 target
+
+- 如果没有 `target`，只有 `url`，会把 url 转换成图片，然后添加水印，页面不会有任何变化

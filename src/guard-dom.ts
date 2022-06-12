@@ -1,3 +1,5 @@
+import { ErrorType } from './interface'
+
 /**
  * 守护水印DOM
  * @param target 水印dom
@@ -7,11 +9,20 @@ class GuardDom {
   parent: HTMLElement
   cloneTarget: Node
   observer!: MutationObserver
-  cb: Function | undefined
+  onchange: Function | undefined
+  success: Function | undefined
+  onerror: Function | undefined
 
-  constructor(target: HTMLElement, cb: Function | undefined) {
+  constructor(
+    target: HTMLElement,
+    onchange: Function | undefined,
+    success: Function | undefined,
+    onerror: Function | undefined
+  ) {
     this.target = target
-    this.cb = cb
+    this.onchange = onchange
+    this.success = success
+    this.onerror = onerror
     this.parent = this.target.parentElement as HTMLElement
     this.cloneTarget = target.cloneNode(true) as HTMLElement
   }
@@ -22,9 +33,15 @@ class GuardDom {
 
     this.observer = new MutationObserver(this._callback)
     if (!this.observer) {
-      throw new Error('守护DOM失败：浏览器不支持MutationObserver')
+      const err: ErrorType = {
+        code: 2001,
+        message: '水印守护失败',
+        reason: '浏览器不支持MutationObserver',
+      }
+      this.onerror && this.onerror(err)
     }
     this.observer.observe(body, config)
+    this.success && this.success()
   }
 
   _callback = (mutationsList: MutationRecord[]) => {
@@ -33,13 +50,13 @@ class GuardDom {
         // 删除
         mutation.removedNodes.forEach((item) => {
           if (item === this.target) {
-            this.cb && this.cb()
+            this.onchange && this.onchange()
             this._readdDom()
           }
         })
       } else if (this.target === mutation.target) {
         // 修改
-        this.cb && this.cb()
+        this.onchange && this.onchange()
         this._readdDom()
       }
     }

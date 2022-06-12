@@ -6,43 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>l-watermark</title>
     <style>
-      #top-container {
-        margin: 0;
-        padding: 0;
-        line-height: 96vh;
-        text-align: center;
-        font-size: 40px;
-      }
       #demo-image {
-        width: 98vw;
-        height: 780px;
+        width: 400px;
+      }
+      #bottom-hello_world {
+        height: 220px;
+        background-color: beige;
+        text-align: center;
+        font-size: 30px;
       }
     </style>
   </head>
   <body>
-    <img id="demo-image" src="./demo-image.png" alt="" />
-    <div id="top-container" style="height: 96vh; background-color: beige"></div>
-    <div id="bottom-container" style="height: 48vh; background-color: bisque"></div>
-    <script src="https://unpkg.com/l-watermark@0.1.1/dist/l-watermark.umd.js"></script>
+    <img id="demo-image" src="./ab-v1.0.0.jpg" alt="" />
+    <div id="bottom-hello_world">Hello World!</div>
+    <script src="https://unpkg.com/l-watermark@1.0.0/dist/l-watermark.umd.js"></script>
     <script>
-      /**
-       * Image WaterMark
-       */
-
-      // demo 1
-      // WaterMark.image({
-      //   target: document.getElementById('demo-image'),
-      //   cSpace: 50,
-      //   vSpace: 30,
-      //   text: 'Banned Gaiden',
-      //   color: 'rgba(0,0,0,0.6)',
-      //   fontSize: 30,
+      // WaterMark.page({
+      //   containerEl: document.body,
+      //   text: "Internal Data",
+      //   color: "rgba(0, 0, 0, 0.4)",
+      //   fontSize: 24
       // })
 
-      // demo 2
+      // WaterMark.page({
+      //   containerEl: document.body,
+      //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
+      //   cSpace: 20,
+      //   vSpace: 50
+      // })
+
       // WaterMark.image({
-      //   position: 'bottomRight',
       //   target: document.getElementById('demo-image'),
+      //   text: 'Angelababy',
+      //   cSpace: 100,
+      //   vSpace: 30,
+      //   color: 'rgba(0,0,0,0.6)',
+      //   fontSize: 70,
+      // })
+
+      // WaterMark.image({
+      //   target: document.getElementById('demo-image'),
+      //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
       //   cSpace: 20,
       //   vSpace: 20,
       //   text: '@ GitHub - CleverLiurx',
@@ -50,50 +55,39 @@
       //   fontSize: 40,
       // })
 
-      // demo 3
       // WaterMark.image({
       //   target: document.getElementById('demo-image'),
-      //   /**
-      //    * If you don't have an <img> label
-      //    * You can use the option "url" instead of "target"
-      //    * The url can be a web image address or a base64
-      //    * Then use the SUCCESS callback function to accept base64 of the watermarked image
-      //    * For example：
-      //    * url: "http://example.com/image/xxx.pnng",
-      //    * url: "data:image/png;base64,iVBORw0KG..."
-      //    * Note: When both URL and target are configured, the watermarked image of the "url" will be replaced by "target.src"
-      //    */
-      //   text: 'To base64',
-      //   cSpace: 100,
-      //   success: (data) => console.log(data),
+      //   position: "bottomRight",
+      //   text: '@ GitHub - CleverLiurx',
+      //   color: 'rgba(255, 0, 0, 1)',
+      //   fontSize: 80,
+      //   cSpace: 20,
+      //   vSpace: 20,
+      // })
+
+      // WaterMark.image({
+      //   target: document.getElementById('demo-image'),
+      //   position: "topLeft",
+      //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png"
+      //   cSpace: 20,
+      //   vSpace: 20,
       // })
 
       /**
-       * Page WaterMark
+       * If you don't have an <img> label
+       * You can use the option "url" instead of "target"
+       * The url can be a web image address or a base64
+       * Then use the SUCCESS callback function to accept base64 of the watermarked image
+       * For example：
+       * url: "http://example.com/image/xxx.pnng",
+       * url: "data:image/png;base64,iVBORw0KG..."
+       * Note: When both URL and target are configured, the watermarked image of the "url" will be replaced by "target.src"
        */
-
-      // demo 4
-      // WaterMark.page({})
-
-      // demo 5
-      // WaterMark.page({
-      //   text: 'Confidential Paper',
-      //   color: 'rgba(0,0,0,0.08)',
+      // WaterMark.image({
+      //   url: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/ab-v1.0.0-demo.png",
+      //   text: 'Angelababy',
       //   cSpace: 100,
-      // })
-
-      // demo 6
-      // WaterMark.page({
-      //   containerEl: document.getElementById('top-container'),
-      //   text: 'Secret Content',
-      // })
-      // WaterMark.page({
-      //   containerEl: document.getElementById('bottom-container'),
-      //   text: 'GitHub',
-      //   angle: 0,
-      //   cSpace: 120,
-      //   vSpace: 10,
-      //   fontSize: 30,
+      //   success: (data) => console.log(data),
       // })
     </script>
   </body>

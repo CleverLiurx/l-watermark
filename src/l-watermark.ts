@@ -1,33 +1,13 @@
 import {
-  PageWaterMarkConfig,
   UserPageWaterMarkConfig,
-  ImageWaterMarkConfig,
   UserImageWaterMarkConfig,
+  Text2Page,
+  Image2Page,
+  Text2Image,
+  Image2Image,
 } from './interface'
 import PageWaterMark from './page'
 import ImageWaterMark from './image'
-
-const defaultPageConfig: PageWaterMarkConfig = {
-  containerEl: document.body,
-  text: '默认水印',
-  color: 'rgba(0, 0, 0, 0.15)',
-  fontSize: 24,
-  zIndex: '10000',
-  cSpace: 0,
-  vSpace: 0,
-  angle: -25,
-}
-
-const defaultImageConfig: ImageWaterMarkConfig = {
-  text: '水印',
-  secret: false,
-  position: 'repeat',
-  color: 'rgba(0, 0, 0, 1)',
-  fontSize: 24,
-  cSpace: 0,
-  vSpace: 0,
-  angle: -25,
-}
 
 class WaterMark {
   constructor() {
@@ -35,13 +15,65 @@ class WaterMark {
   }
 
   static image(config: UserImageWaterMarkConfig) {
-    const configs: ImageWaterMarkConfig = { ...defaultImageConfig, ...config }
-    return new ImageWaterMark(configs)
+    // image字段权重大于text
+
+    if (config.image) {
+      // 图片水印
+      const defaultConfig: Image2Image = {
+        image: config.image,
+        secret: false,
+        position: 'repeat',
+        cSpace: 0,
+        vSpace: 0,
+      }
+      let configs: Image2Image = { ...defaultConfig, ...config }
+      return new ImageWaterMark(configs)
+    } else {
+      // 文字水印
+      const defaultConfig: Text2Image = {
+        text: config.text || '默认水印',
+        secret: false,
+        position: 'repeat',
+        color: 'rgba(0, 0, 0, 1)',
+        fontSize: 24,
+        cSpace: 0,
+        vSpace: 0,
+        angle: -25,
+      }
+      let configs: Text2Image = { ...defaultConfig, ...config }
+      return new ImageWaterMark(configs)
+    }
   }
 
   static page(config: UserPageWaterMarkConfig) {
-    const configs: PageWaterMarkConfig = { ...defaultPageConfig, ...config }
-    return new PageWaterMark(configs)
+    // image字段权重大于text
+
+    if (config.image) {
+      // 图片水印
+      const defaultConfig: Image2Page = {
+        image: config.image,
+        containerEl: document.body,
+        zIndex: '10000',
+        cSpace: 0,
+        vSpace: 0,
+      }
+      let configs: Image2Page = { ...defaultConfig, ...config }
+      return new PageWaterMark(configs)
+    } else {
+      // 文字水印
+      let defaultConfig: Text2Page = {
+        text: config.text || '默认水印',
+        containerEl: document.body,
+        color: 'rgba(0, 0, 0, 0.15)',
+        fontSize: 24,
+        zIndex: '10000',
+        cSpace: 0,
+        vSpace: 0,
+        angle: -25,
+      }
+      const configs: Text2Page = { ...defaultConfig, ...config }
+      return new PageWaterMark(configs)
+    }
   }
 
   static video() {

@@ -1,10 +1,20 @@
-import { ImageWaterMarkConfig } from './interface'
+import { Text2Image, Image2Image, ErrorType } from './interface'
+import { url2base64 } from './utils'
 
 class ImageWaterMark {
-  config: ImageWaterMarkConfig
+  config: Text2Image | Image2Image
+  imgFlag: boolean = false
 
-  constructor(config: ImageWaterMarkConfig) {
+  constructor(config: Text2Image | Image2Image) {
     this.config = config
+    this.imgFlag = false
+
+    // 断言在编译为js后无效
+    if (config as Image2Image) {
+      const { image } = config as Image2Image
+      this.imgFlag = !!image
+    }
+    // imgFlag ? this.image2WatermarkImage() : this.text2WatermarkImage()
     this.init()
   }
 
@@ -34,13 +44,13 @@ class ImageWaterMark {
       src = oldImgSrc
     }
 
-    this._addWatermark(img, src)
+    // this._addWatermark(img, src)
   }
 
   // 图片添加水印
   _addWatermark(img: HTMLImageElement, src: string) {
     img.src = src
-    img.onload = () => {
+    img.onload = async () => {
       // 创建画布
       const canvas = document.createElement('canvas')
       // 绘制文字环境
@@ -52,7 +62,9 @@ class ImageWaterMark {
         // 图片添加到canvas
         ctx.drawImage(img, 0, 0, width, height)
         // 水印添加到cancas
-        this._text2canvas(ctx, width, height)
+        this.imgFlag
+          ? await this._image2canvas(ctx, width, height)
+          : this._text2canvas(ctx, width, height)
         // canvas转换成base64
         const base64 = canvas.toDataURL()
         // 替换原dom
@@ -68,9 +80,69 @@ class ImageWaterMark {
     }
   }
 
+  async _image2canvas(ctx: CanvasRenderingContext2D, width: number, height: number) {
+    const config = this.config as Image2Image
+    const { image, position } = config
+    let base64 = ''
+
+    if (/^data:image\/.*;base64,/.test(image) === true) {
+      base64 = image
+    } else {
+      base64 = await url2base64(config)
+      if (!base64) {
+        const err: ErrorType = {
+          code: 1001,
+          message: '水印加载失败！',
+          reason: '水印图片url转base64失败',
+        }
+        config.onerror && config.onerror(err)
+      }
+    }
+    const img = new Image()
+    img.setAttribute('crossorigin', 'crossorigin')
+    img.src = base64
+
+    await new Promise<void>((resolve) => {
+      img.onload = () => {
+        const { width: imgWidth, height: imgHeight } = img
+        switch (position) {
+          case 'repeat':
+            let w = 0
+            let h = 0
+            while (h < height) {
+              while (w < width) {
+                ctx.drawImage(img, w, h)
+                w += imgWidth
+              }
+              w = 0
+              h += imgHeight
+            }
+            break
+          case 'center':
+            ctx.drawImage(img, (width - imgWidth) / 2, (height - imgHeight) / 2)
+            break
+          case 'topLeft':
+            ctx.drawImage(img, 0, 0)
+            break
+          case 'topRight':
+            ctx.drawImage(img, width - imgWidth, 0)
+            break
+          case 'bottomRight':
+            ctx.drawImage(img, width - imgWidth, height - imgHeight)
+            break
+          case 'bottomLeft':
+            ctx.drawImage(img, 0, height - imgHeight)
+            break
+        }
+        resolve()
+      }
+    })
+  }
+
   // 水印文本添加到canvas
   _text2canvas(ctx: CanvasRenderingContext2D, width: number, height: number) {
-    const { position, color, fontSize, cSpace, vSpace, angle, text } = this.config
+    const config = this.config as Text2Image
+    const { position, color, fontSize, cSpace, vSpace, angle, text } = config
 
     ctx.font = `${fontSize}px microsoft yahei`
     ctx.fillStyle = color
