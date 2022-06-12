@@ -1,4 +1,4 @@
-**English Document Address：**https://github.com/CleverLiurx/l-watermark/blob/master/README-en.md
+English Document Address： https://github.com/CleverLiurx/l-watermark/blob/master/README-en.md
 
 # 一、什么是l-watermark？
 
@@ -36,7 +36,7 @@ import WaterMark from "l-watermark"
 你可以通过 **unpkg.com/l-watermark** 来获取 Js SDK，然后在合适的位置引入即可
 
 ```js
-<script src="https://unpkg.com/l-watermark@1.0.0/dist/l-watermark.umd.js"></script>
+<script src="https://unpkg.com/l-watermark@1.0.1/dist/l-watermark.umd.js"></script>
 ```
 
 # 三、使用示例
