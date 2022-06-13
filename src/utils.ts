@@ -158,6 +158,6 @@ export const decodeImage: (url: string) => Promise<string> = async (url) => {
     ctx.putImageData(originalData, 0, 0)
     result = canvas.toDataURL()
   }
-  
+
   return result
 }
