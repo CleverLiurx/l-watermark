@@ -20,7 +20,7 @@
   <body>
     <img id="demo-image" src="./ab-v1.0.0.jpg" alt="" />
     <div id="bottom-hello_world">Hello World!</div>
-    <script src="https://unpkg.com/l-watermark@1.0.0/dist/l-watermark.umd.js"></script>
+    <script src="https://unpkg.com/l-watermark@1.1.0/dist/l-watermark.umd.js"></script>
     <script>
       // WaterMark.page({
       //   containerEl: document.body,
@@ -89,6 +89,20 @@
       //   cSpace: 100,
       //   success: (data) => console.log(data),
       // })
+
+      // WaterMark.image({
+      //   target: document.getElementById("demo-image"),
+      //   text: "User Id: 1008611",
+      //   fontSize: 80,
+      //   secret: true,
+      // })
+      // const decodeImage = async () => {
+      //   const imgDom = document.getElementById("demo-image")
+      //   const decodeSrc = await WaterMark.decodeImage(imgDom.src)
+      //   imgDom.src = decodeSrc
+      // }
+      
+
     </script>
   </body>
 </html>

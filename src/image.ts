@@ -1,5 +1,5 @@
 import { Text2Image, Image2Image, ErrorType } from './interface'
-import { url2base64 } from './utils'
+import { url2base64, mergeData, text2ImageData } from './utils'
 
 class ImageWaterMark {
   config: Text2Image | Image2Image
@@ -44,7 +44,7 @@ class ImageWaterMark {
       src = oldImgSrc
     }
 
-    // this._addWatermark(img, src)
+    this._addWatermark(img, src)
   }
 
   // 图片添加水印
@@ -88,7 +88,7 @@ class ImageWaterMark {
     if (/^data:image\/.*;base64,/.test(image) === true) {
       base64 = image
     } else {
-      base64 = await url2base64(config)
+      base64 = await url2base64(config.image, config.cSpace, config.vSpace)
       if (!base64) {
         const err: ErrorType = {
           code: 1001,
@@ -142,7 +142,11 @@ class ImageWaterMark {
   // 水印文本添加到canvas
   _text2canvas(ctx: CanvasRenderingContext2D, width: number, height: number) {
     const config = this.config as Text2Image
-    const { position, color, fontSize, cSpace, vSpace, angle, text } = config
+    let { position, color, fontSize, cSpace, vSpace, angle, text, secret } = config
+
+    if (secret) {
+      position = 'center'
+    }
 
     ctx.font = `${fontSize}px microsoft yahei`
     ctx.fillStyle = color
@@ -172,9 +176,16 @@ class ImageWaterMark {
         }
         break
       case 'center':
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillText(text, width / 2, height / 2)
+        if (secret) {
+          const originalData = ctx.getImageData(0, 0, width, height)
+          const textData = text2ImageData(config, width, height)
+          const newOriginalData = mergeData(originalData, textData)
+          ctx.putImageData(newOriginalData, 0, 0)
+        } else {
+          ctx.textAlign = 'center'
+          ctx.textBaseline = 'middle'
+          ctx.fillText(text, width / 2, height / 2)
+        }
         break
       case 'topLeft':
         ctx.textAlign = 'left'

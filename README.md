@@ -7,7 +7,7 @@ English Document Address： https://github.com/CleverLiurx/l-watermark/blob/mast
 - 能够覆盖多场景的水印添加方法
   1. 给`网页`添加`文字/图片`水印
   2. 给`图片`添加`文字/图片`水印
-  3. 给图片添加暗水印（将在下一版本上线）
+  3. 给图片添加`暗水印`
 - 守护水印不被篡改和删除
 - 提供多种钩子函数
   1. onchange: 用户试图篡改或删除水印时的回调，你在此时获取用户id并上报给服务器
@@ -36,7 +36,7 @@ import WaterMark from "l-watermark"
 你可以通过 **unpkg.com/l-watermark** 来获取 Js SDK，然后在合适的位置引入即可
 
 ```js
-<script src="https://unpkg.com/l-watermark@1.0.2/dist/l-watermark.umd.js"></script>
+<script src="https://unpkg.com/l-watermark@1.1.0/dist/l-watermark.umd.js"></script>
 ```
 
 # 三、使用示例
@@ -142,6 +142,35 @@ WaterMark.image({
 
 ![image-demo-5](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-5.png)
 
+## 3.2.5 给图片添加暗水印
+
+设置暗水印仅需要把 `secret` 设为 `true` 即可，但是 **暗水印此版本仅支持文字模式，暂不支持图片模式**
+
+```js
+WaterMark.image({
+  target: document.getElementById("demo-image"),
+  text: "User Id: 1008611",
+  fontSize: 80,
+  secret: true,
+})
+```
+
+添加完暗水印后，肉眼看起来新图片与原图没有任何区别
+
+![image-demo-7](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-7.png)
+
+但是调用暗水印解密工具 `WaterMark.decodeImage(url|base64|)` 后发现水印文字显示出来了
+
+```js
+const decodeImage = async () => {
+  const imgDom = document.getElementById("demo-image")
+  const decodeSrc = await WaterMark.decodeImage(imgDom.src)
+  imgDom.src = decodeSrc
+}
+```
+
+![image-demo-6](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-6.png)
+
 # 配置
 
 ## 页面加水印 WaterMark.page
@@ -173,6 +202,7 @@ WaterMark.image({
 | image |                     | 水印图片（与text二选一） | string（url\|base64） |
 | target   |                     | 要加水印的目标                                          | HTMLImageElement                                             |
 | url      |                     | 图片的地址或base64（详细信息见文末）                                | string(url\|base64)                                          |
+| secret | false | 开启暗水印（目前暗水印仅支持position=center的文本水印） | boolean                                   |
 | color    | rgba(0, 0, 0, 0.15) | 颜色（图片水印时无效）                                       | string                                                       |
 | fontSize | 24                  | 字体大小（图片水印时无效）                                   | number                                                       |
 | position | repeat              | 水印的位置（默认repeat，铺满；其他选项在指定位置添加一个水印） | string(repeat \|center \|bottomRight \|bottomLeft \|topLeft \|topRight) |
@@ -187,3 +217,11 @@ WaterMark.image({
 - 如果同时配置了 `target` 和 `url`，会把 url 转换成图片，然后添加水印，最后替换 target
 
 - 如果没有 `target`，只有 `url`，会把 url 转换成图片，然后添加水印，页面不会有任何变化
+
+## 暗水印解密 WaterMark.decodeImage
+
+接收一个 `string` 类型参数（url/base64），返回 `Promise<string>` ，用法：
+
+```js
+base64 = await WaterMark.decodeImage(url)
+```

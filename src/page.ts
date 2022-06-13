@@ -25,7 +25,7 @@ class PageWaterMark {
     if (/^data:image\/.*;base64,/.test(config.image) === true) {
       base64 = config.image
     } else {
-      base64 = await url2base64(config)
+      base64 = await url2base64(config.image, config.cSpace, config.vSpace)
       if (!base64) {
         const err: ErrorType = {
           code: 1001,

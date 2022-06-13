@@ -8,6 +8,7 @@ import {
 } from './interface'
 import PageWaterMark from './page'
 import ImageWaterMark from './image'
+import { decodeImage } from './utils'
 
 class WaterMark {
   constructor() {
@@ -78,6 +79,10 @@ class WaterMark {
 
   static video() {
     throw new Error('暂不支持视频添加水印功能，敬请期待！')
+  }
+
+  static async decodeImage(url: string) {
+    return await decodeImage(url)
   }
 }
 
