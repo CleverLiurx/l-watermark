@@ -134,14 +134,14 @@ export const decodeImage: (url: string) => Promise<string> = async (url) => {
 
   const { data } = originalData
   for (let i = 0; i < data.length; i++) {
-    if (i % 4 == 0) {
+    if (i % 4 === 0) {
       // 红色分量
-      if (data[i] % 2 == 0) {
+      if (data[i] % 2 === 0) {
         data[i] = 0
       } else {
         data[i] = 255
       }
-    } else if (i % 4 == 3) {
+    } else if (i % 4 === 3) {
       // alpha通道不做处理
       continue
     } else {

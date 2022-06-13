@@ -82,7 +82,7 @@ class WaterMark {
   }
 
   static async decodeImage(url: string) {
-    return await decodeImage(url)
+    return decodeImage(url)
   }
 }
 
