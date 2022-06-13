@@ -39,6 +39,10 @@ class GuardDom {
     this.success && this.success()
   }
 
+  stop() {
+    this.observer.disconnect()
+  }
+
   _callback = (mutationsList: MutationRecord[]) => {
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList') {

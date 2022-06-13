@@ -5,6 +5,7 @@ import { getTextSize, ErrorMsg } from './utils'
 class PageWaterMark {
   watermakr: HTMLDivElement = document.createElement('div')
   config: Text2Page | Image2Page
+  guardDom?: GuardDom
 
   constructor(config: Text2Page | Image2Page, wmType: string) {
     this.config = config
@@ -15,6 +16,12 @@ class PageWaterMark {
       this.createTextWatermark()
     }
   }
+
+  remove() {
+    this.guardDom?.stop()
+    this.watermakr?.remove()
+  }
+
 
   // 添加图片水印到页面
   createImageWatermark() {
@@ -82,13 +89,13 @@ class PageWaterMark {
 
   // 监视水印不被改变
   _observeWaterMark() {
-    const observe = new GuardDom(
+    this.guardDom = new GuardDom(
       this.watermakr,
       this.config.onchange,
       this.config.success,
       this.config.onerror
     )
-    observe.start()
+    this.guardDom?.start()
   }
 }
 
