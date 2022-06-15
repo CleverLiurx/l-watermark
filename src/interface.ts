@@ -29,36 +29,23 @@ export type Image2Page = {
   success?(): void
 }
 
-export type UserPageWaterMarkConfig =
-  | {
-      text?: string
-      image?: string
-      containerEl?: HTMLElement
-      color?: string
-      fontSize?: number
-      zIndex?: string
-      cSpace?: number
-      vSpace?: number
-      angle?: number
-      onchange?(): void
-      error?(err: ErrorType): void
-      success?(): void
-    }
-  | {
-      text?: string
-      image: string
-      containerEl?: HTMLElement
-      zIndex?: string
-      cSpace?: number
-      vSpace?: number
-      onchange?(): void
-      error?(err: ErrorType): void
-      success?(): void
-    }
+export interface UserPageWaterMarkConfig {
+  text?: string
+  image?: string
+  containerEl?: HTMLElement
+  color?: string
+  fontSize?: number
+  zIndex?: string
+  cSpace?: number
+  vSpace?: number
+  angle?: number
+  onchange?(): void
+  error?(err: ErrorType): void
+  success?(): void
+}
 
 export type Text2Image = {
-  target?: HTMLImageElement // img标签
-  url?: string // 图片url/base64
+  target: HTMLImageElement // img标签
   text: string // 水印文字
   secret: boolean // 开启暗水印
   position: string // repeat center bottomRight bottomLeft topLeft topRight
@@ -72,9 +59,10 @@ export type Text2Image = {
 }
 
 export type Image2Image = {
-  target?: HTMLImageElement // img标签
-  url?: string // 图片url/base64
+  target: HTMLImageElement // img标签
   image: string // 水印图片url/base64
+  imageWidth?: number
+  imageHeight?: number
   secret: boolean // 开启暗水印
   position: string // repeat center bottomRight bottomLeft topLeft topRight
   cSpace: number // 水印横向间距
@@ -83,31 +71,19 @@ export type Image2Image = {
   onerror?(err: ErrorType): void
 }
 
-export type UserImageWaterMarkConfig =
-  | {
-      target?: HTMLImageElement
-      url?: string
-      text?: string
-      image?: string
-      secret?: boolean
-      position?: string
-      color?: string
-      fontSize?: number
-      cSpace?: number
-      vSpace?: number
-      angle?: number
-      success?(base64: string): void
-      onerror?(err: ErrorType): void
-    }
-  | {
-      target?: HTMLImageElement
-      url?: string
-      text?: string
-      image: string
-      position?: string
-      secret?: boolean
-      cSpace?: number
-      vSpace?: number
-      success?(base64: string): void
-      onerror?(err: ErrorType): void
-    }
+export interface UserImageWaterMarkConfig {
+  target: HTMLImageElement | string
+  text?: string
+  image?: string
+  imageWidth?: number
+  imageHeight?: number
+  secret?: boolean
+  position?: string
+  color?: string
+  fontSize?: number
+  cSpace?: number
+  vSpace?: number
+  angle?: number
+  success?(base64: string): void
+  onerror?(err: ErrorType): void
+}

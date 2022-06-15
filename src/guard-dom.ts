@@ -1,4 +1,4 @@
-import { ErrorType } from './interface'
+import { ErrorMsg } from './utils'
 
 /**
  * 守护水印DOM
@@ -33,12 +33,7 @@ class GuardDom {
 
     this.observer = new MutationObserver(this._callback)
     if (!this.observer) {
-      const err: ErrorType = {
-        code: 2001,
-        message: '水印守护失败',
-        reason: '浏览器不支持MutationObserver',
-      }
-      this.onerror && this.onerror(err)
+      this.onerror && this.onerror(ErrorMsg.NoSupportMutation())
     }
     this.observer.observe(body, config)
     this.success && this.success()
@@ -56,7 +51,7 @@ class GuardDom {
         })
       } else if (this.target === mutation.target) {
         // 修改
-        this.onchange && this.onchange()
+        this.onchange && this.onchange(mutation)
         this._readdDom()
       }
     }

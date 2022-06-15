@@ -1,191 +1,171 @@
-import { Text2Image, Image2Image, ErrorType } from './interface'
-import { url2base64, mergeData, text2ImageData } from './utils'
+import { Text2Image, Image2Image } from './interface'
+import { getTextSize, ErrorMsg } from './utils'
 
 class ImageWaterMark {
   config: Text2Image | Image2Image
-  imgFlag: boolean = false
+  canvas!: HTMLCanvasElement
 
-  constructor(config: Text2Image | Image2Image) {
+  constructor(config: Text2Image | Image2Image, wmType: string) {
     this.config = config
-    this.imgFlag = false
 
-    // 断言在编译为js后无效
-    if (config as Image2Image) {
-      const { image } = config as Image2Image
-      this.imgFlag = !!image
-    }
-    // imgFlag ? this.image2WatermarkImage() : this.text2WatermarkImage()
-    this.init()
-  }
+    this.initTargetCanvas()
 
-  init() {
-    // TODO: 待完善容错处理
-    const oldImgSrc = this.config.target?.src
-    const url = this.config.url
-    let src = ''
-
-    if (!oldImgSrc && !url) {
-      throw new Error('水印添加失败：target和url不能全为空！')
-    }
-
-    const img = new Image()
-    img.setAttribute('crossorigin', 'crossorigin')
-
-    if (oldImgSrc && url) {
-      // url转换成img -> img加水印 -> img替换target
-      src = url
-    }
-    if (!oldImgSrc && url) {
-      // url转换成img -> img加水印 -> 返回img的base64
-      src = url
-    }
-    if (oldImgSrc && !url) {
-      // targe加水印 -> 替换原target
-      src = oldImgSrc
-    }
-
-    this._addWatermark(img, src)
-  }
-
-  // 图片添加水印
-  _addWatermark(img: HTMLImageElement, src: string) {
-    img.src = src
-    img.onload = async () => {
-      // 创建画布
-      const canvas = document.createElement('canvas')
-      // 绘制文字环境
-      const ctx = canvas.getContext('2d')
-      if (ctx) {
-        const { width, height } = img
-        canvas.width = width
-        canvas.height = height
-        // 图片添加到canvas
-        ctx.drawImage(img, 0, 0, width, height)
-        // 水印添加到cancas
-        this.imgFlag
-          ? await this._image2canvas(ctx, width, height)
-          : this._text2canvas(ctx, width, height)
-        // canvas转换成base64
-        const base64 = canvas.toDataURL()
-        // 替换原dom
-        if (this.config.target) {
-          this.config.target.src = base64
-        }
-        // 执行success回掉
-        this.config.success && this.config.success(base64)
-      }
-    }
-    img.onerror = () => {
-      throw new Error(`图片加载失败：请检查src: ${src} 是否正确！`)
-    }
-  }
-
-  async _image2canvas(ctx: CanvasRenderingContext2D, width: number, height: number) {
-    const config = this.config as Image2Image
-    const { image, position } = config
-    let base64 = ''
-
-    if (/^data:image\/.*;base64,/.test(image) === true) {
-      base64 = image
+    if (wmType === 'image') {
+      this.image2canvas()
     } else {
-      base64 = await url2base64(config.image, config.cSpace, config.vSpace)
-      if (!base64) {
-        const err: ErrorType = {
-          code: 1001,
-          message: '水印加载失败！',
-          reason: '水印图片url转base64失败',
-        }
-        config.onerror && config.onerror(err)
-      }
+      this.text2canvas()
     }
-    const img = new Image()
-    img.setAttribute('crossorigin', 'crossorigin')
-    img.src = base64
+  }
 
-    await new Promise<void>((resolve) => {
-      img.onload = () => {
-        const { width: imgWidth, height: imgHeight } = img
-        switch (position) {
-          case 'repeat':
-            let w = 0
-            let h = 0
-            while (h < height) {
-              while (w < width) {
-                ctx.drawImage(img, w, h)
-                w += imgWidth
-              }
-              w = 0
-              h += imgHeight
+  // 将目标图片放到caanvas
+  initTargetCanvas() {
+    const img = this.config.target
+
+    const canvas = document.createElement('canvas')
+    const { width, height } = img
+    canvas.width = width
+    canvas.height = height
+
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      ctx.drawImage(img, 0, 0, width, height)
+      this.canvas = canvas
+    } else {
+      this.config.onerror && this.config.onerror(ErrorMsg.NoSupportCanvas())
+    }
+  }
+
+  text2canvas() {
+    if (this.config.secret) {
+      // 画暗水印
+      this.drawEncryptedText2canvas()
+    } else {
+      // 画明水印
+      this.drawSurfaceText2canvas()
+    }
+  }
+
+  image2canvas: () => void = async () => {
+    const { image, position, target, success, imageWidth, imageHeight } = this.config as Image2Image
+    const img = await this._url2img(image, imageWidth, imageHeight)
+
+    const { width: newImgWidth, height: newImgHeight } = img
+    const { width, height } = this.canvas
+
+    const ctx = this.canvas.getContext('2d')
+
+    if (ctx) {
+      switch (position) {
+        case 'repeat':
+          let w = 0
+          let h = 0
+          while (h < height) {
+            while (w < width) {
+              ctx.drawImage(img, w, h, newImgWidth, newImgHeight)
+              w += newImgWidth
             }
-            break
-          case 'center':
-            ctx.drawImage(img, (width - imgWidth) / 2, (height - imgHeight) / 2)
-            break
-          case 'topLeft':
-            ctx.drawImage(img, 0, 0)
-            break
-          case 'topRight':
-            ctx.drawImage(img, width - imgWidth, 0)
-            break
-          case 'bottomRight':
-            ctx.drawImage(img, width - imgWidth, height - imgHeight)
-            break
-          case 'bottomLeft':
-            ctx.drawImage(img, 0, height - imgHeight)
-            break
-        }
-        resolve()
+            w = 0
+            h += newImgHeight
+          }
+          break
+        case 'center':
+          ctx.drawImage(
+            img,
+            (width - newImgWidth) / 2,
+            (height - newImgHeight) / 2,
+            newImgWidth,
+            newImgHeight
+          )
+          break
+        case 'topLeft':
+          ctx.drawImage(img, 0, 0, newImgWidth, newImgHeight)
+          break
+        case 'topRight':
+          ctx.drawImage(img, width - newImgWidth, 0, newImgWidth, newImgHeight)
+          break
+        case 'bottomRight':
+          ctx.drawImage(img, width - newImgWidth, height - newImgHeight, newImgWidth, newImgHeight)
+          break
+        case 'bottomLeft':
+          ctx.drawImage(img, 0, height - newImgHeight, newImgWidth, newImgHeight)
+          break
+      }
+      const base64 = this.canvas.toDataURL()
+      target.src = base64
+      success && success(base64)
+    }
+  }
+
+  drawEncryptedText2canvas() {
+    const { width, height } = this.canvas
+    const ctx = this.canvas.getContext('2d')
+    if (ctx) {
+      const targetImageData = ctx.getImageData(0, 0, width, height)
+      const textImageData = this._text2ImageData(this.config as Text2Image, width, height)
+      const watermarkImageData = this._encryptAndMergeImageData(targetImageData, textImageData)
+      ctx.putImageData(watermarkImageData, 0, 0)
+      const base64 = this.canvas.toDataURL()
+      this.config.target.src = base64
+      this.config.success && this.config.success(base64)
+    }
+  }
+
+  drawSurfaceText2canvas() {
+    const config = this.config as Text2Image
+    const { width, height } = this.canvas
+    const ctx = this.canvas.getContext('2d')
+    if (ctx) {
+      this._fillText2Ctx(ctx, config, width, height)
+      const base64 = this.canvas.toDataURL()
+      this.config.target.src = base64
+      this.config.success && this.config.success(base64)
+    }
+  }
+
+  _url2img(src: string, width?: number, height?: number) {
+    const img = new Image(width, height)
+    img.setAttribute('crossorigin', 'crossorigin')
+    img.src = src
+    return new Promise<HTMLImageElement>((resolve, reject) => {
+      img.onload = () => {
+        resolve(img)
+      }
+      img.onerror = () => {
+        reject(new Image())
       }
     })
   }
 
-  // 水印文本添加到canvas
-  _text2canvas(ctx: CanvasRenderingContext2D, width: number, height: number) {
-    const config = this.config as Text2Image
-    let { position, color, fontSize, cSpace, vSpace, angle, text, secret } = config
+  _text2ImageData(config: Text2Image, width: number, height: number) {
+    let data = new ImageData(1, 1)
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
 
-    if (secret) {
-      position = 'center'
+    if (ctx) {
+      this._fillText2Ctx(ctx, config, width, height)
+      data = ctx.getImageData(0, 0, width, height)
     }
 
+    return data
+  }
+
+  _fillText2Ctx(
+    ctx: CanvasRenderingContext2D,
+    textConfig: Text2Image,
+    width: number,
+    height: number
+  ) {
+    let { position, color, fontSize, cSpace, vSpace, angle, text } = textConfig
     ctx.font = `${fontSize}px microsoft yahei`
     ctx.fillStyle = color
 
     switch (position) {
-      case 'repeat':
+      case 'center':
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
-        const { width: textWith } = this._getTextSize(text, fontSize)
-        const wmWidth = textWith + cSpace // 单个水印文字占的宽度
-        const wmHeight = textWith + vSpace // 单个水印文字占的高度
-        ctx.translate(width / 2, height / 2)
-        ctx.rotate((Math.PI / 180) * angle)
-
-        const diagonal = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2))
-
-        let w = -diagonal / 2
-        let h = -diagonal / 2
-
-        while (h < diagonal / 2) {
-          while (w < diagonal / 2) {
-            ctx.fillText(text, w, h)
-            w += wmWidth
-          }
-          w = -diagonal / 2
-          h += wmHeight
-        }
-        break
-      case 'center':
-        if (secret) {
-          const originalData = ctx.getImageData(0, 0, width, height)
-          const textData = text2ImageData(config, width, height)
-          const newOriginalData = mergeData(originalData, textData)
-          ctx.putImageData(newOriginalData, 0, 0)
-        } else {
-          ctx.textAlign = 'center'
-          ctx.textBaseline = 'middle'
-          ctx.fillText(text, width / 2, height / 2)
-        }
+        ctx.fillText(text, width / 2, height / 2)
         break
       case 'topLeft':
         ctx.textAlign = 'left'
@@ -207,27 +187,70 @@ class ImageWaterMark {
         ctx.textBaseline = 'bottom'
         ctx.fillText(text, 0 + cSpace, height - vSpace)
         break
+      default:
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        const { width: textWith } = getTextSize(text, fontSize)
+        const wmWidth = textWith + cSpace
+        const wmHeight = textWith + vSpace
+        ctx.translate(width / 2, height / 2)
+        ctx.rotate((Math.PI / 180) * angle)
+
+        const diagonal = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2))
+
+        let w = -diagonal / 2
+        let h = -diagonal / 2
+
+        while (h < diagonal / 2) {
+          while (w < diagonal / 2) {
+            ctx.fillText(text, w, h)
+            w += wmWidth
+          }
+          w = -diagonal / 2
+          h += wmHeight
+        }
     }
   }
 
-  // 获取文字的长宽
-  _getTextSize(text: string, fontSize: number) {
-    const span = document.createElement('span')
-    const result: { width: number; height: number } = { width: 0, height: 0 }
-    result.width = span.offsetWidth
-    result.height = span.offsetWidth
-    span.style.visibility = 'hidden'
-    span.style.fontSize = fontSize + 'px'
-    document.body.appendChild(span)
-    if (span.textContent) {
-      span.textContent = text
-    } else {
-      span.innerText = text
+  _encryptAndMergeImageData(targetData: ImageData, textData: ImageData, rgb?: string) {
+    const oData = targetData.data
+    const tData = textData.data
+
+    let bit
+    let offset
+
+    switch (rgb) {
+      case 'G':
+        bit = 1
+        offset = 2
+        break
+      case 'B':
+        bit = 2
+        offset = 1
+        break
+      default:
+        bit = 0
+        offset = 3
     }
-    result.width = span.offsetWidth - result.width
-    result.height = span.offsetHeight - result.height
-    span.parentNode?.removeChild(span)
-    return result
+
+    for (let i = 0; i < oData.length; i++) {
+      if (i % 4 === bit) {
+        // 对目标通道：文字为空的地方 原图处理为偶数；文字不为空的地方，原图处理为奇数
+        if (tData[i + offset] === 0 && oData[i] % 2 === 1) {
+          // 文字为空为原图为奇数 -> 变为偶数
+          if (oData[i] === 255) {
+            oData[i]--
+          } else {
+            oData[i]++
+          }
+        } else if (tData[i + offset] !== 0 && oData[i] % 2 === 0) {
+          // 文字不为空，原图为偶数 -> 变为奇数
+          oData[i]++
+        }
+      }
+    }
+
+    return targetData
   }
 }
 

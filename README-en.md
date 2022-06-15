@@ -1,178 +1,239 @@
-# What is l-watermark？
+中文文档地址： https://github.com/CleverLiurx/l-watermark/blob/master/README.md
 
-`l-watermark` is a watermark SDK that supports TS, including:
+# 1. What is l-watermark？
 
-- Add a watermark to `web page` or `image`
-- Customize the content and style of watermark
-- Monitor watermarks to prevent tampering and deletion
-- Provide hooks: You can send the userId to the server when watermarking is abnormal
-- Add a `hidden watermark` to the image
+`l-watermark` is a web watermark SDK based on TS, which contains:
 
-# DEMO
+- Can cover more than scene watermarking method
+  1. Add `text/picture` watermark to `webpage`
+  2. Add `text/picture` watermark to `picture`
+  3. Add a `'hidden watermark'` to the picture
+  4. `Decrypt` hidden watermark images
+- Guard the watermark from being tampered with and deleted
+- Provides a variety of callback functions
+  1. onchange: a callback when a user attempts to tamper with or delete a watermark, at which point you get the user ID and report it to the server
+  2. onerror: the callback when the watermark failed to be added, you can see why the watermark failed to be added
+  3. success: you can get the watermarked image base64 as a callback when the watermark is successfully added
+- Custom watermark style
+  1. Customize color, font size, hierarchy, spacing, transparency, rotation angle, etc
+  2. Customize the watermark position in the picture: full, middle, upper left corner, lower right corner, etc
 
-See: https://github.com/CleverLiurx/l-watermark/blob/master/demo/index.html
+# 2. Install
 
-# Install
+## 2.1 npm
 
-## npm
-
-`npm` installation is recommended
-
-```shell
+```bash
 npm install l-watermark
+import WaterMark from "l-watermark"
 ```
 
-## CDN
+## 2.2 CDN
 
-You can obtain the latest version of the resource through "unpkg.com/l-watermark", and introduce the `js` file on the page to start using it.
-
-```html
-<script src="https://unpkg.com/l-watermark@0.1.2/dist/l-watermark.umd.js"></script>
-```
-
-# Usage
-
-## Add watermarks to web pages
-
-1. Simplest: add watermarks to all pages
+You can get the latest SDK at **unpkg.com/l-watermark**, or you can specify `@x.x.x'`to get a specific version of the SDK, and then import it at the appropriate location
 
 ```js
-WaterMark.page({})
+<script src="https://unpkg.com/l-watermark@2.0.0/dist/l-watermark.umd.js"></script>
 ```
 
-![default-page-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/default-page-wm.png)
+# 3 Demo
 
-2. Make the watermark more beautiful
+## 3.1 Add watermarks to webpage
+
+### 3.1.1 Full screen text watermark
 
 ```js
 WaterMark.page({
-  text: "Confidential Paper",
-  color: "rgba(0,0,0,0.08)",
-  cSpace: 100
+  containerEl: document.body,
+  text: "Internal Data",
+  color: "rgba(0, 0, 0, 0.4)",
+  fontSize: 24
 })
 ```
 
-![diy-page-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/diy-page-wm.png)
+![page-demo-1](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/page-demo-1.png)
 
-3. Add different watermarks for different areas
+### 3.1.2 Partial area of the image watermark
 
 ```js
 WaterMark.page({
-  containerEl: document.getElementById("top-container"),
-  text: "Secret Content"
-})
-WaterMark.page({
-  containerEl: document.getElementById("bottom-container"),
-  text: "GitHub",
-  angle: 0,
-  cSpace: 120,
-  vSpace: 10,
-  fontSize: 30
+  containerEl: document.getElementById("hello_world"),
+  image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
+  cSpace: 20,
+  vSpace: 50
 })
 ```
 
-![two-container-diff-page-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/two-container-diff-page-wm.png)
+![image-demo-8](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-8.png)
 
-## Add a watermark to the image
+## 3.2 Add watermarks to picture
 
-1. Add a watermark to the `img` element
+### 3.2.1 Text watermarking
 
 ```js
 WaterMark.image({
-  target: document.getElementById("demo-image"),
-  cSpace: 50,
-  vSpace: 30,
-  text: "Banned Gaiden",
-  color: "rgba(0,0,0,0.6)",
-  fontSize: 30,
+  target: document.getElementById('demo-image'),
+  text: 'Angelababy',
+  cSpace: 20,
+  color: 'rgba(0,0,0,0.6)',
+  fontSize: 20,
 })
 ```
 
-![default-image-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/default-image-wm.png)
+![image-demo-1](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-1.png)
 
-2. Adds a watermark at the specified location
+### 3.2.2 Image watermarking
 
 ```js
 WaterMark.image({
-  position: "bottomRight",
-  target: document.getElementById("demo-image"),
+  target: document.getElementById('demo-image'),
+  image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
   cSpace: 20,
   vSpace: 20,
-  text: "@ GitHub - CleverLiurx",
-  color: "rgba(87, 8, 235, 1)",
-  fontSize: 40,
+  imageWidth: 60,
+  imageHeight: 40
 })
 ```
 
-![position-image-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/position-image-wm.png)
+![image-demo-2](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-2.png)
 
-3. Ges `base64` with a watermarked image
+### 3.2.3 Adds a watermark at the specified location
+
+```js
+// Add text watermark in the lower right corner of the photo
+WaterMark.image({
+  target: document.getElementById('demo-image'),
+  position: "bottomRight",
+  text: '@ GitHub - CleverLiurx',
+  color: 'rgba(255, 0, 0, 1)',
+  fontSize: 20,
+  cSpace: 20,
+  vSpace: 10,
+})
+```
+
+![image-demo-3](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-3.png)
+
+```js
+// Add the image watermark to the top left corner of the photo
+WaterMark.image({
+  target: document.getElementById('demo-image'),
+  position: "topLeft",
+  image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
+  imageWidth: 100,
+  imageHeight: 60,
+  cSpace: 20,
+  vSpace: 20
+})
+```
+
+![image-demo-4](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-4.png)
+
+## 3.2.4 Get the base64 format of the watermark image
+
+When `target` is not `HTMLImageElement`, the page will not change after watermarking, but you can get the base64 watermarked image through the `success` callback function
+
+```js
+WaterMark.image({
+  target: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/ab-v1.0.0-demo.png",
+  text: 'Angelababy',
+  cSpace: 100,
+  success: (data) => console.log(data),
+})
+```
+
+![image-demo-5](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-5.png)
+
+## 3.2.5 Encryption/decryption of hidden watermark
+
+To set hidden watermarking, just set `secret` to `true`, but this version only supports text mode, not image mode
 
 ```js
 WaterMark.image({
   target: document.getElementById("demo-image"),
-  /**
-   * If you don't have an <img> label
-   * You can use the option "url" instead of "target"
-   * The url can be a web image address or a base64
-   * Then use the SUCCESS callback function to accept base64 of the watermarked image
-   * For example：
-   * url: "http://example.com/image/xxx.pnng",
-   * url: "data:image/png;base64,iVBORw0KG..."
-   * Note: When both URL and target are configured, the watermarked image of the "url" will be replaced by "target.src"
-   */
-  text: "To base64",
-  cSpace: 100,
-  success: data => console.log(data)
+  text: "User Id: 1008611",
+  position: 'center',
+  secret: true,
 })
 ```
 
-![base64-image-wm](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/base64-image-wm.png)
+After adding the hidden watermark,  **the naked eye will look no different from the original image**
 
-4. Add "Hidden Watermark" to the image
+![image-demo-7](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-7.png)
 
-**This feature will be updated in the next version**
+However, after the hidden watermark decryption tool is called, the watermark text is displayed
 
-![preload](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/0232071584c8c353536eb607235b1e61.jpeg)
+```js
+const decodeImage = async () => {
+  const imgDom = document.getElementById("demo-image")
+  const decodeSrc = await WaterMark.utils.decodeImage(imgDom.src)
+  imgDom.src = decodeSrc
+}
+```
 
-# Config
+![image-demo-6](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-6.png)
 
-## WaterMark.page
+# 4. Options
 
-****
+## 4.1 WaterMark.page(PageOp)
 
-| Options     | Default             | Explain                                                      | Type        |
-| ----------- | ------------------- | ------------------------------------------------------------ | ----------- |
-| text        | 默认水印            | watermark text                                               | string      |
-| containerEl | document.body       | the container of watermark                                   | HTMLElement |
-| color       | rgba(0, 0, 0, 0.15) | css: color                                                   | string      |
-| fontSize    | 24                  | css: font-size                                               | number      |
-| zIndex      | 10000               | css: z-index                                                 | string      |
-| cSpace      | 0                   | crosswise spacing                                            | number      |
-| vSpace      | 0                   | vertical spacing                                             | number      |
-| angle       | -25                 | rotation angle                                               | number      |
-| onchange    | () => {}            | callback function when the watermark is tampered with or deleted | Function    |
-
-## WaterMark.image
+This is the configuration item when the `WaterMark.page(PageOp)` function is called to add a watermark to the page
 
 ****
 
-| Options  | Default             | Explain                                                      | Type             |
-| -------- | ------------------- | ------------------------------------------------------------ | ---------------- |
-| text     | 水印                | watermark text                                               | string           |
-| target   |                     | the target element of the watermark                          | HTMLImageElement |
-| color    | rgba(0, 0, 0, 0.15) | css: color                                                   | string           |
-| fontSize | 24                  | css: font-size                                               | number           |
-| position | repeat              | position of watermark: repeat \| center \| bottomRight \| bottomLeft \| topLeft \| topRight | string           |
-| cSpace   | 0                   | crosswise spacing                                            | number           |
-| vSpace   | 0                   | vertical spacing                                             | number           |
-| angle    | -25                 | rotation angle（It only works when `position: repeat`. In other cases, the default value of angle is 0） | number           |
-| success  | (base64) => {}      | The callback function when watermark is successfully added, the parameter is base64 for the image | Function         |
-| url      |                     | a web image address or a base64                              | string           |
+| Options     | Default               | Explain                                                      | Type                   |
+| ----------- | --------------------- | ------------------------------------------------------------ | ---------------------- |
+| text        | Demo Text             | watermark text (conflicts with image)                        | string                 |
+| image       |                       | watermark image (conflicts with text)                        | string(img.src)        |
+| containerEl | document.body         | the element to be watermarked                                | HTMLElement            |
+| color       | "rgba(0, 0, 0, 0.15)" | color of text                                                | string                 |
+| fontSize    | 24                    | font size of text                                            | number                 |
+| zIndex      | "10000"               | css: z-index                                                 | string                 |
+| cSpace      | 0                     | the crosswise spacing between individual watermarks          | number                 |
+| vSpace      | 0                     | the vertical spacing between individual watermarks           | number                 |
+| angle       | -25                   | rotation angle of text                                       | number                 |
+| onchange    |                       | a callback function when the watermark is tampered with or deleted | Function               |
+| onerror     |                       | a callback function in case of error adding watermark        | Function(ErrorMessage) |
+| success     |                       | the callback function after successfully adding watermark    | Function               |
 
-**About `target` and `url`：**
+## 4.2 WaterMark.image(ImageOp)
 
-1. At least one target and URL cannot be empty
-2. When both `url` and `target` are configured, the watermarked image of the `url` will be replaced by `target.src`
-3. If the `target` exists, the `url` does not exist, a watermark is added to the target
-4. If the  `target` does not exist, the `url` exists, the page does not change, but you can use the `SUCCESS callback function` to accept base64 of the watermarked image
+This is the configuration item when the `WaterMark.image(ImageOp)` function is called to add a watermark to the picture
+
+****
+
+| Options     | Default               | Explain                                                      | Type                                                         |
+| ----------- | --------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| target      |                       | the target to watermark                                      | HTMLImageElement\|string(img.src)                            |
+| text        | "Demo Text"           | watermark text (conflicts with image)                        | string                                                       |
+| image       |                       | watermark image (conflicts with text)                        | string(img.src)                                              |
+| imageWidth  |                       | the width of the image                                       | number                                                       |
+| imageHeight |                       | the width of the height                                      | number                                                       |
+| secret      | false                 | whether to add a hidden watermark                            | boolean                                                      |
+| color       | "rgba(0, 0, 0, 0.15)" | color of text                                                | string                                                       |
+| fontSize    | 24                    | font size of text                                            | number                                                       |
+| position    | "repeat"              | the location of the watermark (default covered with target, other options is add a watermark at the specified location) | string(repeat \|center \|bottomRight \|bottomLeft \|topLeft \|topRight) |
+| cSpace      | 0                     | the crosswise spacing between individual watermarks          | number                                                       |
+| vSpace      | 0                     | the vertical spacing between individual watermarks           | number                                                       |
+| angle       | -25                   | rotation angle of text                                       | number                                                       |
+| success     |                       | he callback function after successfully adding watermark     | Function                                                     |
+| onerror     |                       | a callback function in case of error adding watermark        | Function(ErrorMessage)                                       |
+
+**NOTE：**`img.src` means that it can be **a image path、URL address or base64**
+
+## 4.3 WaterMark.utils
+
+### 4.3.1 Decrypt `hidden watermark` images
+
+Receives a `string` argument (img.src) and returns `Promise<string>`
+
+```js
+const imgBase64 = await WaterMark.utils.decodeImage(url)
+```
+
+### 4.3.2 Add `hidden watermark`
+
+Of course you can use the `success` callback in `WaterMarking. image (ImageOp)` to get the watermarked image, but we also provide a utility function that let's you add `hidden watermark` to the image and get its base64, which returns `Promise<string>`
+
+```js
+const imgBase64 = await WaterMark.utils.decodeImage({ImageOp})
+```

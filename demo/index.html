@@ -9,7 +9,7 @@
       #demo-image {
         width: 400px;
       }
-      #bottom-hello_world {
+      #hello_world {
         height: 220px;
         background-color: beige;
         text-align: center;
@@ -19,90 +19,73 @@
   </head>
   <body>
     <img id="demo-image" src="./ab-v1.0.0.jpg" alt="" />
-    <div id="bottom-hello_world">Hello World!</div>
-    <script src="https://unpkg.com/l-watermark@1.1.0/dist/l-watermark.umd.js"></script>
+    <div id="hello_world">Hello World!</div>
+    <script src="https://unpkg.com/l-watermark@2.0.0/dist/l-watermark.umd.js"></script>
+    <!-- <script src="../dist/l-watermark.umd.js"></script> -->
     <script>
-      // WaterMark.page({
-      //   containerEl: document.body,
-      //   text: "Internal Data",
-      //   color: "rgba(0, 0, 0, 0.4)",
-      //   fontSize: 24
-      // })
-
-      // WaterMark.page({
-      //   containerEl: document.body,
-      //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
-      //   cSpace: 20,
-      //   vSpace: 50
-      // })
-
-      // WaterMark.image({
-      //   target: document.getElementById('demo-image'),
-      //   text: 'Angelababy',
-      //   cSpace: 100,
-      //   vSpace: 30,
-      //   color: 'rgba(0,0,0,0.6)',
-      //   fontSize: 70,
-      // })
-
-      // WaterMark.image({
-      //   target: document.getElementById('demo-image'),
-      //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
-      //   cSpace: 20,
-      //   vSpace: 20,
-      //   text: '@ GitHub - CleverLiurx',
-      //   color: 'rgba(87, 8, 235, 1)',
-      //   fontSize: 40,
-      // })
-
-      // WaterMark.image({
-      //   target: document.getElementById('demo-image'),
-      //   position: "bottomRight",
-      //   text: '@ GitHub - CleverLiurx',
-      //   color: 'rgba(255, 0, 0, 1)',
-      //   fontSize: 80,
-      //   cSpace: 20,
-      //   vSpace: 20,
-      // })
-
-      // WaterMark.image({
-      //   target: document.getElementById('demo-image'),
-      //   position: "topLeft",
-      //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png"
-      //   cSpace: 20,
-      //   vSpace: 20,
-      // })
-
-      /**
-       * If you don't have an <img> label
-       * You can use the option "url" instead of "target"
-       * The url can be a web image address or a base64
-       * Then use the SUCCESS callback function to accept base64 of the watermarked image
-       * For example：
-       * url: "http://example.com/image/xxx.pnng",
-       * url: "data:image/png;base64,iVBORw0KG..."
-       * Note: When both URL and target are configured, the watermarked image of the "url" will be replaced by "target.src"
-       */
-      // WaterMark.image({
-      //   url: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/ab-v1.0.0-demo.png",
-      //   text: 'Angelababy',
-      //   cSpace: 100,
-      //   success: (data) => console.log(data),
-      // })
-
-      // WaterMark.image({
-      //   target: document.getElementById("demo-image"),
-      //   text: "User Id: 1008611",
-      //   fontSize: 80,
-      //   secret: true,
-      // })
-      // const decodeImage = async () => {
-      //   const imgDom = document.getElementById("demo-image")
-      //   const decodeSrc = await WaterMark.decodeImage(imgDom.src)
-      //   imgDom.src = decodeSrc
-      // }
-      
-
+      window.onload = () => {
+        // WaterMark.page({
+        //   containerEl: document.body,
+        //   text: "Internal Data",
+        //   color: "rgba(0, 0, 0, 0.4)",
+        //   fontSize: 24
+        // })
+        // WaterMark.page({
+        //   containerEl: document.getElementById("hello_world"),
+        //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
+        //   cSpace: 10,
+        //   vSpace: 50
+        // })
+        // WaterMark.image({
+        //   target: document.getElementById('demo-image'),
+        //   text: 'Angelababy',
+        //   cSpace: 10,
+        //   color: 'rgba(0,0,0,0.6)',
+        //   fontSize: 20,
+        // })
+        // WaterMark.image({
+        //   target: document.getElementById('demo-image'),
+        //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
+        //   cSpace: 20,
+        //   vSpace: 20,
+        //   imageWidth: 60,
+        //   imageHeight: 40
+        // })
+        // WaterMark.image({
+        //   target: document.getElementById('demo-image'),
+        //   position: "bottomRight",
+        //   text: '@ GitHub - CleverLiurx',
+        //   color: 'rgba(255, 0, 0, 1)',
+        //   fontSize: 20,
+        //   cSpace: 20,
+        //   vSpace: 10,
+        // })
+        // WaterMark.image({
+        //   target: document.getElementById('demo-image'),
+        //   position: "topLeft",
+        //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
+        //   imageWidth: 100,
+        //   imageHeight: 60,
+        //   cSpace: 20,
+        //   vSpace: 20,
+        // })
+        // WaterMark.image({
+        //   target: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/ab-v1.0.0-demo.png",
+        //   text: 'Angelababy',
+        //   success: (data) => console.log(data),
+        // })
+        // WaterMark.image({
+        //   target: document.getElementById("demo-image"),
+        //   text: "User Id: 1008611",
+        //   position: 'center',
+        //   secret: true,
+        // })
+        // const decodeImage = async () => {
+        //   const imgDom = document.getElementById("demo-image")
+        //   const decodeSrc = await WaterMark.utils.decodeImage(imgDom.src)
+        //   imgDom.src = decodeSrc
+        // }
+      }
     </script>
   </body>
 </html>
