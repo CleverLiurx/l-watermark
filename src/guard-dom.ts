@@ -5,26 +5,20 @@ import { ErrorMsg } from './utils'
  * @param target 水印dom
  */
 class GuardDom {
-  target: HTMLElement
-  parent: HTMLElement
-  cloneTarget: Node
+  targetParent: HTMLElement
+  targetClone: HTMLElement
   observer!: MutationObserver
-  onchange: Function | undefined
-  success: Function | undefined
-  onerror: Function | undefined
 
   constructor(
-    target: HTMLElement,
-    onchange: Function | undefined,
-    success: Function | undefined,
-    onerror: Function | undefined
+    public target: HTMLElement,
+    public onchange: Function | undefined,
+    public success: Function | undefined,
+    public onerror: Function | undefined
   ) {
-    this.target = target
-    this.onchange = onchange
-    this.success = success
-    this.onerror = onerror
-    this.parent = this.target.parentElement as HTMLElement
-    this.cloneTarget = target.cloneNode(true) as HTMLElement
+    // 获取target的父元素
+    this.targetParent = this.target.parentElement as HTMLElement
+    // 克隆一个target：当target被删除时添加targetClone
+    this.targetClone = target.cloneNode(true) as HTMLElement
   }
 
   start() {
@@ -46,24 +40,25 @@ class GuardDom {
   _callback = (mutationsList: MutationRecord[]) => {
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList') {
-        // 删除
         mutation.removedNodes.forEach((item) => {
           if (item === this.target) {
-            this.onchange && this.onchange()
+            // 删除：onchang回调/重新添加一个水印dom
+            this.onchange && this.onchange(mutation)
             this._readdDom()
           }
         })
       } else if (this.target === mutation.target) {
-        // 修改
+        // 修改：onchang回调/重新添加一个水印dom
         this.onchange && this.onchange(mutation)
         this._readdDom()
       }
     }
   }
 
+  // 重新添加水印dom
   _readdDom() {
-    const newTarget = this.cloneTarget.cloneNode(true) as HTMLElement
-    this.parent.appendChild(newTarget)
+    const newTarget = this.targetClone.cloneNode(true) as HTMLElement
+    this.targetParent.appendChild(newTarget)
     this.target = newTarget
     this.observer.disconnect()
     this.start()

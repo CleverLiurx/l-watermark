@@ -39,7 +39,7 @@ import WaterMark from "l-watermark"
 
 # 三、使用示例
 
-## 3.1 给WEB页面添加水印
+## 3.1 给WEB页面添加/移除水印
 
 ### 3.1.1 全屏添加文字水印
 
@@ -66,6 +66,15 @@ WaterMark.page({
 ```
 
 ![image-demo-8](https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/image-demo-8.png)
+
+### 3.1.2 移除页面水印
+
+```js
+// 创建水印
+const demoWaterMark = WaterMark.page({})
+// 移除水印
+demoWaterMark.remove()
+```
 
 ## 3.2 给图片添加水印
 
@@ -234,4 +243,15 @@ const imgBase64 = await WaterMark.utils.decodeImage(url)
 
 ```js
 const imgBase64 = await WaterMark.utils.decodeImage({ImageOp})
+```
+
+## 4.4 API
+
+### 移除页面水印 `remove()`
+
+```js
+// 创建水印
+const demoWaterMark = WaterMark.page({})
+// 移除
+demoWaterMark.remove()
 ```

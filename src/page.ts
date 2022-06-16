@@ -22,7 +22,6 @@ class PageWaterMark {
     this.watermakr?.remove()
   }
 
-
   // 添加图片水印到页面
   createImageWatermark() {
     const config = this.config as Image2Page
