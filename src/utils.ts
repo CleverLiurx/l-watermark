@@ -21,8 +21,8 @@ export class ErrorMsg {
   static ImageNotFound(reason?: string) {
     return {
       code: 2001,
-      message: '找不到图片',
-      reason: '水印图片url转base64失败',
+      message: '图片加载失败',
+      reason: reason || '水印图片的src错误',
     } as ErrorType
   }
 
@@ -30,7 +30,7 @@ export class ErrorMsg {
     return {
       code: 3001,
       message: '参数错误',
-      reason: '水印图片url转base64失败',
+      reason: reason || '配置参数错误',
     } as ErrorType
   }
 }
@@ -118,4 +118,23 @@ export const getTextSize = (text: string, fontSize: number) => {
 
   span.parentNode?.removeChild(span)
   return result
+}
+
+// url转img dom
+export const url2img: (
+  src: string,
+  width?: number,
+  height?: number
+) => Promise<HTMLImageElement | null> = (src, width, height) => {
+  const img = new Image(width, height)
+  img.setAttribute('crossorigin', 'crossorigin')
+  img.src = src
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    img.onload = () => {
+      resolve(img)
+    }
+    img.onerror = () => {
+      reject(null)
+    }
+  })
 }

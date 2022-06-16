@@ -1,5 +1,5 @@
 import { Text2Image, Image2Image } from './interface'
-import { getTextSize, ErrorMsg } from './utils'
+import { getTextSize, ErrorMsg, url2img } from './utils'
 
 class ImageWaterMark {
   config: Text2Image | Image2Image
@@ -46,8 +46,13 @@ class ImageWaterMark {
   }
 
   image2canvas: () => void = async () => {
-    const { image, position, target, success, imageWidth, imageHeight } = this.config as Image2Image
-    const img = await this._url2img(image, imageWidth, imageHeight)
+    const { image, position, target, success, onerror, imageWidth, imageHeight } = this
+      .config as Image2Image
+    const img = (await url2img(image, imageWidth, imageHeight)) as HTMLImageElement
+
+    if (!img) {
+      onerror && onerror(ErrorMsg.ImageNotFound('水印图片的src错误, 请检查 image 属性'))
+    }
 
     const { width: newImgWidth, height: newImgHeight } = img
     const { width, height } = this.canvas
@@ -56,18 +61,6 @@ class ImageWaterMark {
 
     if (ctx) {
       switch (position) {
-        case 'repeat':
-          let w = 0
-          let h = 0
-          while (h < height) {
-            while (w < width) {
-              ctx.drawImage(img, w, h, newImgWidth, newImgHeight)
-              w += newImgWidth
-            }
-            w = 0
-            h += newImgHeight
-          }
-          break
         case 'center':
           ctx.drawImage(
             img,
@@ -89,6 +82,17 @@ class ImageWaterMark {
         case 'bottomLeft':
           ctx.drawImage(img, 0, height - newImgHeight, newImgWidth, newImgHeight)
           break
+        default:
+          let w = 0
+          let h = 0
+          while (h < height) {
+            while (w < width) {
+              ctx.drawImage(img, w, h, newImgWidth, newImgHeight)
+              w += newImgWidth
+            }
+            w = 0
+            h += newImgHeight
+          }
       }
       const base64 = this.canvas.toDataURL()
       target.src = base64
@@ -120,20 +124,6 @@ class ImageWaterMark {
       this.config.target.src = base64
       this.config.success && this.config.success(base64)
     }
-  }
-
-  _url2img(src: string, width?: number, height?: number) {
-    const img = new Image(width, height)
-    img.setAttribute('crossorigin', 'crossorigin')
-    img.src = src
-    return new Promise<HTMLImageElement>((resolve, reject) => {
-      img.onload = () => {
-        resolve(img)
-      }
-      img.onerror = () => {
-        reject(new Image())
-      }
-    })
   }
 
   _text2ImageData(config: Text2Image, width: number, height: number) {

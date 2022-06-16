@@ -15,21 +15,20 @@ class GuardDom {
     public success: Function | undefined,
     public onerror: Function | undefined
   ) {
-    // 获取target的父元素
+    // 获取target的父元素：监视的对象
     this.targetParent = this.target.parentElement as HTMLElement
     // 克隆一个target：当target被删除时添加targetClone
     this.targetClone = target.cloneNode(true) as HTMLElement
   }
 
   start() {
-    const body = document.body
     const config = { characterData: true, attributes: true, childList: true, subtree: true }
 
     this.observer = new MutationObserver(this._callback)
     if (!this.observer) {
       this.onerror && this.onerror(ErrorMsg.NoSupportMutation())
     }
-    this.observer.observe(body, config)
+    this.observer.observe(this.targetParent, config)
     this.success && this.success()
   }
 

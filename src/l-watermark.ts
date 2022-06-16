@@ -8,7 +8,7 @@ import {
 } from './interface'
 import PageWaterMark from './page'
 import ImageWaterMark from './image'
-import { decodeImage } from './utils'
+import { decodeImage, ErrorMsg, url2img } from './utils'
 
 class WaterMark {
   constructor() {
@@ -17,17 +17,18 @@ class WaterMark {
 
   // 添加水印到图片
   static async image(config: UserImageWaterMarkConfig) {
+    if (!config.target && !config.image) {
+      config.onerror && config.onerror(ErrorMsg.ParamsError('target 和 image 不能同时为空'))
+    }
+
     // 将string类型的target转换为HTMLImageElement
     if (!(config.target as HTMLImageElement).src) {
-      const img = new Image()
-      img.setAttribute('crossorigin', 'crossorigin')
-      img.src = config.target as string
-      await new Promise<void>((resolve) => {
-        img.onload = () => {
-          config.target = img
-          resolve()
-        }
-      })
+      const img = (await url2img(config.target as string)) as HTMLImageElement
+      if (!img) {
+        config.onerror &&
+          config.onerror(ErrorMsg.ImageNotFound('目标图片的src错误, 请检查 target 属性'))
+      }
+      config.target = img
     }
 
     // 图片水印
