@@ -30,7 +30,15 @@ export class ErrorMsg {
     return {
       code: 3001,
       message: '参数错误',
-      reason: reason || '配置参数错误',
+      reason: reason || '参数类型错误',
+    } as ErrorType
+  }
+
+  static UnknownError(reason?: string) {
+    return {
+      code: 4001,
+      message: '未知错误',
+      reason: reason || '未知原因',
     } as ErrorType
   }
 }
@@ -57,11 +65,13 @@ export const decodeImage: (url: string) => Promise<string> = async (url) => {
         ctx.drawImage(img, 0, 0)
         const data = ctx.getImageData(0, 0, width, height)
         resolve(data)
+      } else {
+        throw ErrorMsg.NoSupportCanvas()
       }
     }
 
     img.onerror = () => {
-      reject(new ImageData(1, 1))
+      reject(ErrorMsg.ImageNotFound())
     }
   })
 
@@ -90,6 +100,8 @@ export const decodeImage: (url: string) => Promise<string> = async (url) => {
   if (ctx) {
     ctx.putImageData(originalData, 0, 0)
     result = canvas.toDataURL()
+  } else {
+    throw ErrorMsg.NoSupportCanvas()
   }
 
   return result
@@ -125,7 +137,7 @@ export const url2img: (
   src: string,
   width?: number,
   height?: number
-) => Promise<HTMLImageElement | null> = (src, width, height) => {
+) => Promise<HTMLImageElement> = (src, width, height) => {
   const img = new Image(width, height)
   img.setAttribute('crossorigin', 'crossorigin')
   img.src = src
@@ -134,7 +146,7 @@ export const url2img: (
       resolve(img)
     }
     img.onerror = () => {
-      reject(null)
+      reject(ErrorMsg.ImageNotFound())
     }
   })
 }

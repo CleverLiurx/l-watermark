@@ -1,11 +1,4 @@
-import {
-  UserPageWaterMarkConfig,
-  UserImageWaterMarkConfig,
-  Text2Page,
-  Image2Page,
-  Text2Image,
-  Image2Image,
-} from './interface'
+import { PageConfig, ImageConfig, ErrorType } from './interface'
 import PageWaterMark from './page'
 import ImageWaterMark from './image'
 import { decodeImage, ErrorMsg, url2img } from './utils'
@@ -16,83 +9,99 @@ class WaterMark {
   }
 
   // 添加水印到图片
-  static async image(config: UserImageWaterMarkConfig) {
-    if (!config.target && !config.image) {
-      config.onerror && config.onerror(ErrorMsg.ParamsError('target 和 image 不能同时为空'))
-    }
-
-    // 将string类型的target转换为HTMLImageElement
-    if (!(config.target as HTMLImageElement).src) {
-      const img = (await url2img(config.target as string)) as HTMLImageElement
-      if (!img) {
-        config.onerror &&
-          config.onerror(ErrorMsg.ImageNotFound('目标图片的src错误, 请检查 target 属性'))
+  static async image(config: ImageConfig.User) {
+    try {
+      // 不能同时为空
+      if (!config.target && !config.image) {
+        throw ErrorMsg.ParamsError("参数target和image不能同时为空")
       }
-      config.target = img
-    }
 
-    // 图片水印
-    if (config.image) {
-      const userConfig: Image2Image = {
-        target: config.target as HTMLImageElement,
-        image: config.image,
-        imageWidth: config.imageWidth,
-        imageHeight: config.imageHeight,
-        secret: config.secret || false,
-        position: config.position || 'repeat',
-        cSpace: config.cSpace || 0,
-        vSpace: config.vSpace || 0,
-        success: config.success,
-        onerror: config.onerror,
+      // 将string类型的target转换成HTMLImageElement
+      if (typeof config.target === 'string') {
+        config.target = await url2img(config.target)
       }
-      return new ImageWaterMark(userConfig, 'image')
-    }
 
-    // 文字水印
-    const userConfig: Text2Image = {
-      target: config.target as HTMLImageElement,
-      text: config.text || 'Demo Text',
-      secret: config.secret || false,
-      position: config.position || 'repeat',
-      color: config.color || 'rgba(0, 0, 0, 1)',
-      fontSize: config.fontSize || 24,
-      cSpace: config.cSpace || 0,
-      vSpace: config.vSpace || 0,
-      angle: config.angle || -25,
-      success: config.success,
-      onerror: config.onerror,
+      if (config.image) {
+        // 图片水印
+        const userConfig: ImageConfig.Image = {
+          target: config.target as HTMLImageElement,
+          image: config.image,
+          imageWidth: config.imageWidth,
+          imageHeight: config.imageHeight,
+          secret: config.secret || false,
+          position: config.position || 'repeat',
+          cSpace: config.cSpace || 0,
+          vSpace: config.vSpace || 0,
+          success: config.success,
+          onerror: config.onerror,
+        }
+        return new ImageWaterMark(userConfig, 'image')
+      } else {
+        // 文字水印
+        const userConfig: ImageConfig.Text = {
+          target: config.target as HTMLImageElement,
+          text: config.text || 'Demo Text',
+          secret: config.secret || false,
+          position: config.position || 'repeat',
+          color: config.color || 'rgba(0, 0, 0, 1)',
+          fontSize: config.fontSize || 24,
+          cSpace: config.cSpace || 0,
+          vSpace: config.vSpace || 0,
+          angle: config.angle || -25,
+          success: config.success,
+          onerror: config.onerror,
+        }
+        return new ImageWaterMark(userConfig, 'text')
+      }
+    } catch (err) {
+      if ((err as ErrorType).code) {
+        config.onerror && config.onerror(err as ErrorType)
+      } else {
+        config.onerror && config.onerror(ErrorMsg.UnknownError(JSON.stringify(err)))
+      }
     }
-    return new ImageWaterMark(userConfig, 'text')
   }
 
   // 添加水印到页面
-  static page(config: UserPageWaterMarkConfig) {
-    // 图片水印: 有image字段即为图片水印
-    if (config.image) {
-      const defaultConfig: Image2Page = {
-        image: config.image,
-        containerEl: document.body,
-        zIndex: '10000',
-        cSpace: 0,
-        vSpace: 0,
+  static page(config: PageConfig.User) {
+    try {
+      if (config.image) {
+        // 图片水印
+        const userConfig: PageConfig.Image = {
+          image: config.image,
+          containerEl: config.containerEl || document.body,
+          zIndex: config.zIndex || '1000',
+          cSpace: config.cSpace || 0,
+          vSpace: config.vSpace || 0,
+          onchange: config.onchange,
+          onerror: config.onerror,
+          success: config.success,
+        }
+        return new PageWaterMark(userConfig, 'image')
+      } else {
+        // 文字水印
+        const userConfig: PageConfig.Text = {
+          text: config.text || 'Demo Text',
+          containerEl: config.containerEl || document.body,
+          color: config.color || 'rgba(0, 0, 0, 0.15)',
+          fontSize: config.fontSize || 24,
+          zIndex: config.zIndex || '10000',
+          cSpace: config.cSpace || 0,
+          vSpace: config.vSpace || 0,
+          angle: config.angle || -25,
+          onchange: config.onchange,
+          onerror: config.onerror,
+          success: config.success,
+        }
+        return new PageWaterMark(userConfig, 'text')
       }
-      let configs: Image2Page = { ...defaultConfig, ...config }
-      return new PageWaterMark(configs, 'image')
+    } catch (err) {
+      if ((err as ErrorType).code) {
+        config.onerror && config.onerror(err as ErrorType)
+      } else {
+        config.onerror && config.onerror(ErrorMsg.UnknownError(JSON.stringify(err)))
+      }
     }
-
-    // 文字水印
-    const defaultConfig: Text2Page = {
-      text: config.text || 'Demo Text',
-      containerEl: document.body,
-      color: 'rgba(0, 0, 0, 0.15)',
-      fontSize: 24,
-      zIndex: '10000',
-      cSpace: 0,
-      vSpace: 0,
-      angle: -25,
-    }
-    const configs: Text2Page = { ...defaultConfig, ...config }
-    return new PageWaterMark(configs, 'text')
   }
 
   // 添加水印到视频
@@ -101,7 +110,7 @@ class WaterMark {
   }
 
   static utils = {
-    encodeImage: async (config: UserImageWaterMarkConfig) => {
+    encodeImage: async (config: ImageConfig.User) => {
       let base64
       config.success = (data) => (base64 = data)
       await WaterMark.image(config)

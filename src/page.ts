@@ -1,13 +1,13 @@
 import GuardDom from './guard-dom'
-import { Text2Page, Image2Page } from './interface'
+import { PageConfig } from './interface'
 import { getTextSize, ErrorMsg } from './utils'
 
 class PageWaterMark {
   watermakr: HTMLDivElement = document.createElement('div')
-  config: Text2Page | Image2Page
+  config: PageConfig.Image | PageConfig.Text
   guardDom?: GuardDom
 
-  constructor(config: Text2Page | Image2Page, wmType: string) {
+  constructor(config: PageConfig.Image | PageConfig.Text, wmType: 'image' | 'text') {
     this.config = config
 
     if (wmType === 'image') {
@@ -24,25 +24,13 @@ class PageWaterMark {
 
   // 添加图片水印到页面
   createImageWatermark() {
-    const config = this.config as Image2Page
-
-    // let base64 = ''
-    // if (/^data:image\/.*;base64,/.test(config.image) === true) {
-    //   base64 = config.image
-    // } else {
-    //   base64 = await url2base64(config.image, config.cSpace, config.vSpace)
-    //   if (!base64) {
-    //     config.onerror && config.onerror(ErrorMsg.ImageNotFound())
-    //   }
-    // }
-
-    this._addWatermark2Container(config.image)
+    this._addWatermark2Container((this.config as PageConfig.Image).image)
     this._observeWaterMark()
   }
 
   // 创建一个的水印图片
   createTextWatermark() {
-    const config = this.config as Text2Page
+    const config = this.config as PageConfig.Text
 
     let base64 = ''
     const canvas = document.createElement('canvas')
@@ -63,7 +51,7 @@ class PageWaterMark {
 
       base64 = canvas.toDataURL()
     } else {
-      config.onerror && config.onerror(ErrorMsg.NoSupportCanvas())
+      throw ErrorMsg.NoSupportCanvas()
     }
 
     this._addWatermark2Container(base64)
@@ -88,13 +76,10 @@ class PageWaterMark {
 
   // 监视水印不被改变
   _observeWaterMark() {
-    this.guardDom = new GuardDom(
-      this.watermakr,
-      this.config.onchange,
-      this.config.success,
-      this.config.onerror
-    )
+    const { onchange, success } = this.config
+    this.guardDom = new GuardDom(this.watermakr, onchange)
     this.guardDom?.start()
+    success && success()
   }
 }
 

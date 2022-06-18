@@ -9,12 +9,7 @@ class GuardDom {
   targetClone: HTMLElement
   observer!: MutationObserver
 
-  constructor(
-    public target: HTMLElement,
-    public onchange: Function | undefined,
-    public success: Function | undefined,
-    public onerror: Function | undefined
-  ) {
+  constructor(public target: HTMLElement, public onchange: Function | undefined) {
     // 获取target的父元素：监视的对象
     this.targetParent = this.target.parentElement as HTMLElement
     // 克隆一个target：当target被删除时添加targetClone
@@ -26,10 +21,9 @@ class GuardDom {
 
     this.observer = new MutationObserver(this._callback)
     if (!this.observer) {
-      this.onerror && this.onerror(ErrorMsg.NoSupportMutation())
+      throw ErrorMsg.NoSupportMutation()
     }
     this.observer.observe(this.targetParent, config)
-    this.success && this.success()
   }
 
   stop() {
