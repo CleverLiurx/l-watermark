@@ -13,7 +13,9 @@ class WaterMark {
     try {
       // 不能同时为空
       if (!config.target && !config.image) {
-        throw ErrorMsg.ParamsError("the 'target' and 'image' parameters cannot be undefined at the same time.")
+        throw ErrorMsg.ParamsError(
+          "the 'target' and 'image' parameters cannot be undefined at the same time."
+        )
       }
 
       // 将string类型的target转换成HTMLImageElement
@@ -24,7 +26,7 @@ class WaterMark {
       if (config.image) {
         // 图片水印
         const userConfig: ImageConfig.Image = {
-          target: config.target as HTMLImageElement,
+          target: config.target,
           image: config.image,
           imageWidth: config.imageWidth,
           imageHeight: config.imageHeight,
@@ -39,7 +41,7 @@ class WaterMark {
       } else {
         // 文字水印
         const userConfig: ImageConfig.Text = {
-          target: config.target as HTMLImageElement,
+          target: config.target,
           text: config.text || 'Demo Text',
           secret: config.secret || false,
           position: config.position || 'repeat',
@@ -106,7 +108,9 @@ class WaterMark {
 
   // 添加水印到视频
   static video() {
-    throw new Error('The function of adding watermarks to videos is not supported at present, please look forward to it.')
+    throw new Error(
+      'The function of adding watermarks to videos is not supported at present, please look forward to it.'
+    )
   }
 
   static utils = {
