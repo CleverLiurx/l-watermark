@@ -2,43 +2,43 @@ import { ErrorType } from './interface'
 
 // 错误消息
 export class ErrorMsg {
-  static NoSupportMutation() {
+  static NoSupportMutation(reason?: string) {
     return {
       code: 1001,
-      message: '开启水印守护失败',
-      reason: '浏览器不支持MutationObserver',
+      message: 'Description enabling watermark protection failed',
+      reason: reason || 'browsers do not support MutationObserver',
     } as ErrorType
   }
 
-  static NoSupportCanvas() {
+  static NoSupportCanvas(reason?: string) {
     return {
       code: 1002,
-      message: '初始化水印失败',
-      reason: '浏览器不支持canvas',
+      message: 'Failed to create watermark',
+      reason: reason || 'browsers do not support canvas',
     } as ErrorType
   }
 
   static ImageNotFound(reason?: string) {
     return {
       code: 2001,
-      message: '图片加载失败',
-      reason: reason || '水印图片的src错误',
+      message: 'Image loading failed',
+      reason: reason || "may be an error image 'src'",
     } as ErrorType
   }
 
   static ParamsError(reason?: string) {
     return {
       code: 3001,
-      message: '参数错误',
-      reason: reason || '参数类型错误',
+      message: 'Parameter error',
+      reason: reason || 'the parameter type or value is incorrect',
     } as ErrorType
   }
 
   static UnknownError(reason?: string) {
     return {
       code: 4001,
-      message: '未知错误',
-      reason: reason || '未知原因',
+      message: 'Unknown error',
+      reason: reason || 'unknown reason',
     } as ErrorType
   }
 }

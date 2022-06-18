@@ -13,7 +13,7 @@ class WaterMark {
     try {
       // 不能同时为空
       if (!config.target && !config.image) {
-        throw ErrorMsg.ParamsError("参数target和image不能同时为空")
+        throw ErrorMsg.ParamsError("the 'target' and 'image' parameters cannot be undefined at the same time.")
       }
 
       // 将string类型的target转换成HTMLImageElement
@@ -106,7 +106,7 @@ class WaterMark {
 
   // 添加水印到视频
   static video() {
-    throw new Error('暂不支持视频添加水印功能，敬请期待！')
+    throw new Error('The function of adding watermarks to videos is not supported at present, please look forward to it.')
   }
 
   static utils = {
