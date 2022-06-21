@@ -32,36 +32,39 @@ class PageWaterMark {
   createTextWatermark() {
     const config = this.config as PageConfig.Text
 
-    let base64 = ''
     const canvas = document.createElement('canvas')
-    const context = canvas.getContext('2d')
+    const { width, height } = getTextSize(config.text, config.fontSize)
+    const ctx = canvas.getContext('2d')
 
-    if (context) {
-      const { width, height } = getTextSize(config.text, config.fontSize)
+    const dpr = window.devicePixelRatio || 1
+    canvas.width = (width + config.cSpace) * dpr
+    canvas.height = (width + config.vSpace) * dpr
 
-      canvas.width = width + config.cSpace
-      canvas.height = width + config.vSpace
-      context.font = `${config.fontSize}px Microsoft YaHei`
-      context.fillStyle = config.color
-      context.textAlign = 'center'
-      context.textBaseline = 'middle'
-      context.translate(canvas.width / 2, canvas.height / 2)
-      context.rotate((Math.PI / 180) * config.angle)
-      context.fillText(config.text, 0, 0)
-
-      base64 = canvas.toDataURL()
+    if (ctx) {
+      ctx.font = `${config.fontSize}px Microsoft YaHei`
+      ctx.fillStyle = config.color
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.translate(canvas.width / 2, canvas.height / 2)
+      ctx.rotate((Math.PI / 180) * config.angle)
+      ctx.scale(dpr, dpr)
+      ctx.fillText(config.text, 0, 0)
     } else {
       throw ErrorMsg.NoSupportCanvas()
     }
 
-    this._addWatermark2Container(base64)
+    const base64 = canvas.toDataURL()
+    this._addWatermark2Container(base64, canvas.width / dpr, canvas.height / dpr)
     this._observeWaterMark()
   }
 
   // 将水印文字图片重复平铺到容器
-  _addWatermark2Container(base64: string) {
+  _addWatermark2Container(imgUrl: string, width?: number, height?: number) {
     this.watermakr.className = 'l-watermark'
-    this.watermakr.style.backgroundImage = `url(${base64})`
+    this.watermakr.style.backgroundImage = `url(${imgUrl})`
+    if (width && height) {
+      this.watermakr.style.backgroundSize = `${width}px ${height}px`
+    }
     this.watermakr.style.position = this.config.containerEl === document.body ? 'fixed' : 'absolute'
     this.watermakr.style.top = '0px'
     this.watermakr.style.right = '0px'
