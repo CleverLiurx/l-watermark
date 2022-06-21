@@ -1,6 +1,6 @@
 {
   "name": "l-watermark",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "l-watermark：一个支持TS的前端水印SDK，可以自由的在图片或前端页面中添加各种形式和内容的水印（或暗水印）！",
   "keywords": [
     "watermark",
