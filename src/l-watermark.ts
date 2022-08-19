@@ -32,8 +32,8 @@ class WaterMark {
           imageHeight: Number(config.imageHeight),
           secret: config.secret || false,
           position: config.position || 'repeat',
-          cSpace: Number(config.cSpace)|| 0,
-          vSpace: Number(config.vSpace)|| 0,
+          cSpace: Number(config.cSpace) || 0,
+          vSpace: Number(config.vSpace) || 0,
           success: config.success,
           onerror: config.onerror,
         }
