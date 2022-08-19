@@ -40,11 +40,11 @@ export namespace PageConfig {
     image?: string
     containerEl?: HTMLElement
     color?: string
-    fontSize?: number
-    zIndex?: string
-    cSpace?: number
-    vSpace?: number
-    angle?: number
+    fontSize?: string | number
+    zIndex?: string | number
+    cSpace?: string | number
+    vSpace?: string | number
+    angle?: string | number
     onchange?(mr: MutationRecord): void
     onerror?(err: ErrorType): void
     success?(): void
@@ -87,15 +87,15 @@ export namespace ImageConfig {
     target: HTMLImageElement | string
     text?: string
     image?: string
-    imageWidth?: number
-    imageHeight?: number
+    imageWidth?: number | string
+    imageHeight?: number | string
     secret?: boolean
     position?: Position
     color?: string
-    fontSize?: number
-    cSpace?: number
-    vSpace?: number
-    angle?: number
+    fontSize?: number | string
+    cSpace?: number | string
+    vSpace?: number | string
+    angle?: number | string
     success?(base64: string): void
     onerror?(err: ErrorType): void
   }
