@@ -36,7 +36,7 @@ import WaterMark from "l-watermark"
 你可以通过 **unpkg.com/l-watermark** 来获取最新的 SDK，当然你也可以指定 `@x.x.x` 来获取特定版本的 SDK，然后在合适的位置引入即可
 
 ```js
-<script src="https://unpkg.com/l-watermark@2.0.6/dist/l-watermark.umd.js"></script>
+<script src="https://unpkg.com/l-watermark@2.1.1/dist/l-watermark.umd.js"></script>
 ```
 
 # 三、使用示例
@@ -198,10 +198,10 @@ const decodeImage = async () => {
 | text        | Demo Text             | 水印文本（与image二选一）              | string          | 否 |
 | image       |                       | 水印图片（与text二选一）               | string(img.src) | 否 |
 | color       | "rgba(0, 0, 0, 0.15)" | 颜色（图片水印时无效）                 | string          | 否 |
-| fontSize    | 24                    | 字体大小（图片水印时无效）             | number          | 否 |
-| zIndex      | "10000"               | 水印的层级                             | string        | 否 |
-| cSpace      | 0                     | 单个水印间的横向间距                   | number          | 否 |
-| vSpace      | 0                     | 单个水印间的纵向间距                   | number          | 否 |
+| fontSize    | 24                    | 字体大小（图片水印时无效）             | number\|string   | 否 |
+| zIndex      | "10000"               | 水印的层级                             | number\|string | 否 |
+| cSpace      | 0                     | 单个水印间的横向间距                   | number\|string   | 否 |
+| vSpace      | 0                     | 单个水印间的纵向间距                   | number\|string   | 否 |
 
 ## 4.2 图片加水印 WaterMark.image(ImageOp)
 
@@ -212,11 +212,11 @@ const decodeImage = async () => {
 | target      |                       | 要加水印的目标                                               | HTMLImageElement\|string(img.src)                            | 是        |
 | text        | "Demo Text"           | 水印文本（与image二选一）                                    | string                                                       | 否        |
 | image       |                       | 水印图片（与text二选一）                                     | string(img.src)                                              | 否        |
-| imageWidth  |                       | 水印图片的宽度                                               | number                                                       | 否        |
-| imageHeight |                       | 水印图片的高度                                               | number                                                       | 否        |
+| imageWidth  |                       | 水印图片的宽度                                               | number\|string                                                | 否        |
+| imageHeight |                       | 水印图片的高度                                               | number\|string                                                | 否        |
 | secret      | false                 | 开启暗水印                                                   | boolean                                                      | 否        |
 | color       | "rgba(0, 0, 0, 0.15)" | 颜色（图片水印时无效）                                       | string                                                       | 否        |
-| fontSize    | 24                    | 字体大小（图片水印时无效）                                   | number                                                       | 否        |
+| fontSize    | 24                    | 字体大小（图片水印时无效）                                   | number\|string                                                | 否        |
 | position    | "repeat"              | 水印的位置（默认repeat，铺满；其他选项在指定位置添加一个水印） | string(repeat \|center \|bottomRight \|bottomLeft \|topLeft \|topRight) | 否        |
 
 **注：**`img.src` 代表其可以为**图片路径、url地址、base64**
