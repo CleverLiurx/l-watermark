@@ -1,6 +1,6 @@
 import GuardDom from './guard-dom'
 import { PageConfig } from './interface'
-import { getTextSize, ErrorMsg } from './utils'
+import { getTextSize, ErrorMsg, url2img } from './utils'
 
 class PageWaterMark {
   watermakr: HTMLDivElement = document.createElement('div')
@@ -24,7 +24,8 @@ class PageWaterMark {
 
   // 添加图片水印到页面
   createImageWatermark() {
-    this._addWatermark2Container((this.config as PageConfig.Image).image)
+    const { image } = this.config as PageConfig.Image
+    this._addWatermark2Container(image)
     this._observeWaterMark()
   }
 
@@ -61,20 +62,29 @@ class PageWaterMark {
   // 将水印文字图片重复平铺到容器
   _addWatermark2Container(imgUrl: string, width?: number, height?: number) {
     this.watermakr.className = 'l-watermark'
-    this.watermakr.style.backgroundImage = `url(${imgUrl})`
-    if (width && height) {
-      this.watermakr.style.backgroundSize = `${width}px ${height}px`
+
+    const wmStyle: { [key: string]: string } = {
+      'background-image': `url(${imgUrl})`,
+      'position': this.config.target === document.body ? 'fixed' : 'absolute',
+      'top': '0px',
+      'right': '0px',
+      'bottom': '0px',
+      'left': '0px',
+      'pointer-events': 'none',
+      'background-repeat': 'repeat',
+      'background-size': `${width}px ${height}px`,
+      'z-index': this.config.zIndex,
+      'display': 'block',
     }
-    this.watermakr.style.position = this.config.containerEl === document.body ? 'fixed' : 'absolute'
-    this.watermakr.style.top = '0px'
-    this.watermakr.style.right = '0px'
-    this.watermakr.style.bottom = '0px'
-    this.watermakr.style.left = '0px'
-    this.watermakr.style.pointerEvents = 'none'
-    this.watermakr.style.backgroundRepeat = 'repeat'
-    this.watermakr.style.zIndex = this.config.zIndex
-    this.config.containerEl.style.position = 'relative'
-    this.config.containerEl.appendChild(this.watermakr)
+
+    let style = ''
+    for (let key in wmStyle) {
+      style += `${key}: ${wmStyle[key]} !important; `
+    }
+
+    this.watermakr.setAttribute('style', style);
+    this.config.target.style.position = 'relative'
+    this.config.target.appendChild(this.watermakr)
   }
 
   // 监视水印不被改变

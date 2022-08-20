@@ -65,13 +65,13 @@ class WaterMark {
   }
 
   // 添加水印到页面
-  static page(config: PageConfig.User) {
+  static page(config: PageConfig.User = {}) {
     try {
       if (config.image) {
         // 图片水印
         const userConfig: PageConfig.Image = {
+          target: config.target || config.containerEl || document.body,
           image: config.image,
-          containerEl: config.containerEl || document.body,
           zIndex: config.zIndex?.toString() || '1000',
           cSpace: Number(config.cSpace) || 0,
           vSpace: Number(config.vSpace) || 0,
@@ -83,8 +83,8 @@ class WaterMark {
       } else {
         // 文字水印
         const userConfig: PageConfig.Text = {
+          target: config.target || config.containerEl || document.body,
           text: config.text || 'Demo Text',
-          containerEl: config.containerEl || document.body,
           color: config.color || 'rgba(0, 0, 0, 0.15)',
           fontSize: Number(config.fontSize) || 24,
           zIndex: config.zIndex?.toLocaleString() || '10000',

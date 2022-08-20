@@ -9,36 +9,37 @@ export interface ErrorType {
 export namespace PageConfig {
   // 文字水印
   export interface Text {
+    target: HTMLElement // 添加水印的目标元素
     text: string // 水印文字
-    containerEl: HTMLElement // 添加水印的目标元素
     color: string // 水印字体颜色rgba
     fontSize: number // 水印字体大小
     zIndex: string // 层级
     cSpace: number // 水印横向间距
     vSpace: number // 水印纵向间距
     angle: number // 水印旋转角度
-    onchange?(mr: MutationRecord): void
-    onerror?(err: ErrorType): void
-    success?(): void
+    onchange?(mr: MutationRecord): void // 水印被改变时候的回调
+    onerror?(err: ErrorType): void // 添加水印发生错误的回调
+    success?(): void // 添加水印成功的回调
   }
 
   // 图片水印
   export interface Image {
+    target: HTMLElement // 添加水印的目标元素
     image: string // 水印图片
-    containerEl: HTMLElement // 添加水印的目标元素
     zIndex: string // 层级
     cSpace: number // 水印横向间距
     vSpace: number // 水印纵向间距
-    onchange?(mr: MutationRecord): void
-    onerror?(err: ErrorType): void
-    success?(): void
+    onchange?(mr: MutationRecord): void // 水印被改变时候的回调
+    onerror?(err: ErrorType): void // 添加水印发生错误的回调
+    success?(): void // 添加水印成功的回调
   }
 
   // 用户配置
   export interface User {
+    target?: HTMLElement
+    containerEl?: HTMLElement
     text?: string
     image?: string
-    containerEl?: HTMLElement
     color?: string
     fontSize?: string | number
     zIndex?: string | number
