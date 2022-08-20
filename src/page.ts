@@ -65,16 +65,16 @@ class PageWaterMark {
 
     const wmStyle: { [key: string]: string } = {
       'background-image': `url(${imgUrl})`,
-      'position': this.config.target === document.body ? 'fixed' : 'absolute',
-      'top': '0px',
-      'right': '0px',
-      'bottom': '0px',
-      'left': '0px',
+      position: this.config.target === document.body ? 'fixed' : 'absolute',
+      top: '0px',
+      right: '0px',
+      bottom: '0px',
+      left: '0px',
       'pointer-events': 'none',
       'background-repeat': 'repeat',
       'background-size': `${width}px ${height}px`,
       'z-index': this.config.zIndex,
-      'display': 'block',
+      display: 'block',
     }
 
     let style = ''
@@ -82,7 +82,7 @@ class PageWaterMark {
       style += `${key}: ${wmStyle[key]} !important; `
     }
 
-    this.watermakr.setAttribute('style', style);
+    this.watermakr.setAttribute('style', style)
     this.config.target.style.position = 'relative'
     this.config.target.appendChild(this.watermakr)
   }
