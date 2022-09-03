@@ -5,7 +5,10 @@
   "keywords": [
     "watermark",
     "水印",
-    "ts"
+    "ts",
+    "vue水印",
+    "react水印",
+    "ts水印"
   ],
   "main": "dist/l-watermark.umd.js",
   "module": "dist/l-watermark.es5.js",

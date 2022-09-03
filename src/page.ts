@@ -75,6 +75,10 @@ class PageWaterMark {
       'background-size': `${width}px ${height}px`,
       'z-index': this.config.zIndex,
       display: 'block',
+      visibility: 'visible',
+      width: '100%',
+      height: '100%',
+      opacity: '1',
     }
 
     let style = ''
