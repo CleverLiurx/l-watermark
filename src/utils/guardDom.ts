@@ -1,10 +1,9 @@
-import { ErrorMsg } from './utils'
-
 /**
  * 守护水印DOM
  * @param target 水印dom
+ * @param onchange 水印改变时的钩子函数
  */
-class GuardDom {
+export class GuardDom {
   targetParent: HTMLElement
   targetClone: HTMLElement
   observer!: MutationObserver
@@ -21,7 +20,7 @@ class GuardDom {
 
     this.observer = new MutationObserver(this._callback)
     if (!this.observer) {
-      throw ErrorMsg.NoSupportMutation()
+      throw new Error(`Not exist: new MutationObserver()`)
     }
     this.observer.observe(this.targetParent, config)
   }
@@ -57,5 +56,3 @@ class GuardDom {
     this.start()
   }
 }
-
-export default GuardDom

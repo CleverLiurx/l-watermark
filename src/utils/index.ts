@@ -1,0 +1,5 @@
+export * from './guardDom'
+export * from './decodeImage'
+export * from './getTextSize'
+export * from './url2img'
+export * from './initConfig'

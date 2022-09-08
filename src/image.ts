@@ -1,11 +1,11 @@
-import { ImageConfig } from './interface'
-import { getTextSize, ErrorMsg, url2img } from './utils'
+import { ImageConfig } from './types'
+import { getTextSize, url2img } from './utils'
 
 class ImageWaterMark {
-  config: ImageConfig.Text | ImageConfig.Image
+  config: ImageConfig.System
   canvas!: HTMLCanvasElement
 
-  constructor(config: ImageConfig.Text | ImageConfig.Image, wmType: 'image' | 'text') {
+  constructor(config: ImageConfig.System, wmType: 'image' | 'text') {
     this.config = config
 
     this.initTargetCanvas()
@@ -31,7 +31,7 @@ class ImageWaterMark {
       ctx.drawImage(img, 0, 0, width, height)
       this.canvas = canvas
     } else {
-      throw ErrorMsg.NoSupportCanvas()
+      throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
     }
   }
 
@@ -46,9 +46,13 @@ class ImageWaterMark {
   }
 
   image2canvas: () => void = async () => {
-    const { image, position, target, success, onerror, imageWidth, imageHeight } = this
-      .config as ImageConfig.Image
+    const { image, position, target, success, onerror, imageWidth, imageHeight } = this.config
     const img = await url2img(image, imageWidth, imageHeight)
+    console.log(img)
+    if (!img) {
+      onerror && onerror(`An error occurred while loading image (src: ${image} )`)
+      return
+    }
 
     const { width: newImgWidth, height: newImgHeight } = img
     const { width, height } = this.canvas
@@ -94,7 +98,7 @@ class ImageWaterMark {
       target.src = base64
       success && success(base64)
     } else {
-      throw ErrorMsg.NoSupportCanvas()
+      throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
     }
   }
 
@@ -103,19 +107,19 @@ class ImageWaterMark {
     const ctx = this.canvas.getContext('2d')
     if (ctx) {
       const targetImageData = ctx.getImageData(0, 0, width, height)
-      const textImageData = this._text2ImageData(this.config as ImageConfig.Text, width, height)
+      const textImageData = this._text2ImageData(this.config, width, height)
       const watermarkImageData = this._encryptAndMergeImageData(targetImageData, textImageData)
       ctx.putImageData(watermarkImageData, 0, 0)
       const base64 = this.canvas.toDataURL()
       this.config.target.src = base64
       this.config.success && this.config.success(base64)
     } else {
-      throw ErrorMsg.NoSupportCanvas()
+      throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
     }
   }
 
   drawSurfaceText2canvas() {
-    const config = this.config as ImageConfig.Text
+    const config = this.config
     const { width, height } = this.canvas
     const ctx = this.canvas.getContext('2d')
     if (ctx) {
@@ -124,11 +128,11 @@ class ImageWaterMark {
       this.config.target.src = base64
       this.config.success && this.config.success(base64)
     } else {
-      throw ErrorMsg.NoSupportCanvas()
+      throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
     }
   }
 
-  _text2ImageData(config: ImageConfig.Text, width: number, height: number) {
+  _text2ImageData(config: ImageConfig.System, width: number, height: number) {
     let data = new ImageData(1, 1)
     const canvas = document.createElement('canvas')
     canvas.width = width
@@ -139,7 +143,7 @@ class ImageWaterMark {
       this._fillText2Ctx(ctx, config, width, height)
       data = ctx.getImageData(0, 0, width, height)
     } else {
-      throw ErrorMsg.NoSupportCanvas()
+      throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
     }
 
     return data
@@ -147,7 +151,7 @@ class ImageWaterMark {
 
   _fillText2Ctx(
     ctx: CanvasRenderingContext2D,
-    textConfig: ImageConfig.Text,
+    textConfig: ImageConfig.System,
     width: number,
     height: number
   ) {

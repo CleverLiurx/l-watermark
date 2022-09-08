@@ -1,13 +1,12 @@
-import GuardDom from './guard-dom'
-import { PageConfig } from './interface'
-import { getTextSize, ErrorMsg, url2img } from './utils'
+import { PageConfig } from './types'
+import { getTextSize, GuardDom } from './utils'
 
 class PageWaterMark {
   watermakr: HTMLDivElement = document.createElement('div')
-  config: PageConfig.Image | PageConfig.Text
+  config: PageConfig.System
   guardDom?: GuardDom
 
-  constructor(config: PageConfig.Image | PageConfig.Text, wmType: 'image' | 'text') {
+  constructor(config: PageConfig.System, wmType: 'image' | 'text') {
     this.config = config
 
     if (wmType === 'image') {
@@ -24,14 +23,14 @@ class PageWaterMark {
 
   // 添加图片水印到页面
   createImageWatermark() {
-    const { image } = this.config as PageConfig.Image
-    this._addWatermark2Container(image)
+    const { image, imageWidth, imageHeight } = this.config
+    this._addWatermark2Container(image, imageWidth, imageHeight)
     this._observeWaterMark()
   }
 
   // 创建一个的水印图片
   createTextWatermark() {
-    const config = this.config as PageConfig.Text
+    const config = this.config
 
     const canvas = document.createElement('canvas')
     const { width, height } = getTextSize(config.text, config.fontSize)
@@ -51,7 +50,7 @@ class PageWaterMark {
       ctx.scale(dpr, dpr)
       ctx.fillText(config.text, 0, 0)
     } else {
-      throw ErrorMsg.NoSupportCanvas()
+      throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
     }
 
     const base64 = canvas.toDataURL()
@@ -79,6 +78,7 @@ class PageWaterMark {
       width: '100%',
       height: '100%',
       opacity: '1',
+      transform: 'none',
     }
 
     let style = ''

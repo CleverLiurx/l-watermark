@@ -20,8 +20,8 @@
   <body>
     <img id="demo-image" src="./ab-v1.0.0.jpg" alt="" />
     <div id="hello_world">Hello World!</div>
-    <script src="https://unpkg.com/l-watermark@2.1.0/dist/l-watermark.umd.js"></script>
-    <!-- <script src="../dist/l-watermark.umd.js"></script> -->
+    <!-- <script src="https://unpkg.com/l-watermark@2.1.0/dist/l-watermark.umd.js"></script> -->
+    <script src="../dist/index.umd.js"></script>
     <script>
       window.onload = () => {
         // WaterMark.page({
@@ -31,8 +31,10 @@
         //   fontSize: 24
         // })
         // WaterMark.page({
-        //   containerEl: document.getElementById("hello_world"),
-        //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
+        //   // target: document.getElementById("hello_world"),
+        //   imageWidth: '20',
+        //   imageHeight: '12',
+        //   image: "./glass15-wm.png",
         //   cSpace: 10,
         //   vSpace: 50
         // })
@@ -45,11 +47,11 @@
         // })
         // WaterMark.image({
         //   target: document.getElementById('demo-image'),
-        //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
-        //   cSpace: 20,
-        //   vSpace: 20,
-        //   imageWidth: 60,
-        //   imageHeight: 40
+        //   image: "./glass15-wm.png",
+        //   // cSpace: 20,
+        //   // vSpace: 20,
+        //   // imageWidth: 60,
+        //   // imageHeight: 40
         // })
         // WaterMark.image({
         //   target: document.getElementById('demo-image'),
