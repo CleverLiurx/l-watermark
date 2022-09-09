@@ -1,7 +1,7 @@
 type Position = 'repeat' | 'center' | 'bottomRight' | 'bottomLeft' | 'topLeft' | 'topRight'
 
 export interface UserWaterMarkConfig {
-  target: HTMLElement | HTMLImageElement | string
+  target: HTMLElement | HTMLImageElement | undefined
   text?: string
   image?: string
   imageWidth?: number | string

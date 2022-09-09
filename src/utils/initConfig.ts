@@ -4,6 +4,7 @@ import { url2img } from './url2img'
 export const fillConfig: (config: UserWaterMarkConfig) => Promise<WaterMarkConfig> = async (
   config
 ) => {
+  // typeof config.target === 'string' => 给图片加水印
   if (typeof config.target === 'string') {
     const dom = await url2img(config.target)
     if (!dom) {
@@ -11,10 +12,23 @@ export const fillConfig: (config: UserWaterMarkConfig) => Promise<WaterMarkConfi
     }
     config.target = dom
   }
+
+  let imageDom: HTMLImageElement | string | undefined = config.image
+  if (config.target.nodeName === 'IMG' && typeof config.image === 'string') {
+    const dom = await url2img(config.image, config.imageWidth, )
+    if (!dom) {
+      throw new Error(`An error occurred while loading image (src: ${config.target} )`)
+    }
+    imageDom = dom
+  }
+
+  // if (!config.text && ) {
+
+  // }
   const configs: WaterMarkConfig = {
     target: config.target,
     text: config.text || 'Sample Text',
-    image: config.image || '',
+    image: imageDom || '',
     imageWidth: (config.imageWidth && Number(config.imageWidth)) || undefined,
     imageHeight: (config.imageHeight && Number(config.imageHeight)) || undefined,
     color: config.color || 'rgba(0, 0, 0, 0.07)',
