@@ -27,6 +27,7 @@ export class GuardDom {
 
   stop() {
     this.observer.disconnect()
+    this.target.remove()
   }
 
   _callback = (mutationsList: MutationRecord[]) => {

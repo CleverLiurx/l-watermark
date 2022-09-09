@@ -48,7 +48,6 @@ class ImageWaterMark {
   image2canvas: () => void = async () => {
     const { image, position, target, success, onerror, imageWidth, imageHeight } = this.config
     const img = await url2img(image, imageWidth, imageHeight)
-    console.log(img)
     if (!img) {
       onerror && onerror(`An error occurred while loading image (src: ${image} )`)
       return
