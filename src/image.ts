@@ -1,11 +1,11 @@
-import { ImageConfig } from './types'
+import { WaterMarkConfig } from './types'
 import { getTextSize, url2img } from './utils'
 
 class ImageWaterMark {
-  config: ImageConfig.System
+  config: WaterMarkConfig
   canvas!: HTMLCanvasElement
 
-  constructor(config: ImageConfig.System, wmType: 'image' | 'text') {
+  constructor(config: WaterMarkConfig, wmType: 'image' | 'text') {
     this.config = config
 
     this.initTargetCanvas()
@@ -19,7 +19,7 @@ class ImageWaterMark {
 
   // 将目标图片放到caanvas
   initTargetCanvas() {
-    const img = this.config.target
+    const img = this.config.target as HTMLImageElement
 
     const canvas = document.createElement('canvas')
     const { width, height } = img
@@ -95,7 +95,7 @@ class ImageWaterMark {
           }
       }
       const base64 = this.canvas.toDataURL()
-      target.src = base64
+      ;(target as HTMLImageElement).src = base64
       success && success(base64)
     } else {
       throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
@@ -111,7 +111,7 @@ class ImageWaterMark {
       const watermarkImageData = this._encryptAndMergeImageData(targetImageData, textImageData)
       ctx.putImageData(watermarkImageData, 0, 0)
       const base64 = this.canvas.toDataURL()
-      this.config.target.src = base64
+      ;(this.config.target as HTMLImageElement).src = base64
       this.config.success && this.config.success(base64)
     } else {
       throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
@@ -125,14 +125,14 @@ class ImageWaterMark {
     if (ctx) {
       this._fillText2Ctx(ctx, config, width, height)
       const base64 = this.canvas.toDataURL()
-      this.config.target.src = base64
+      ;(this.config.target as HTMLImageElement).src = base64
       this.config.success && this.config.success(base64)
     } else {
       throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
     }
   }
 
-  _text2ImageData(config: ImageConfig.System, width: number, height: number) {
+  _text2ImageData(config: WaterMarkConfig, width: number, height: number) {
     let data = new ImageData(1, 1)
     const canvas = document.createElement('canvas')
     canvas.width = width
@@ -151,7 +151,7 @@ class ImageWaterMark {
 
   _fillText2Ctx(
     ctx: CanvasRenderingContext2D,
-    textConfig: ImageConfig.System,
+    textConfig: WaterMarkConfig,
     width: number,
     height: number
   ) {

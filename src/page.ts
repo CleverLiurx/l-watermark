@@ -1,12 +1,12 @@
-import { PageConfig } from './types'
+import { WaterMarkConfig } from './types'
 import { getTextSize, GuardDom } from './utils'
 
 class PageWaterMark {
   watermakr: HTMLDivElement = document.createElement('div')
-  config: PageConfig.System
+  config: WaterMarkConfig
   guardDom?: GuardDom
 
-  constructor(config: PageConfig.System, wmType: 'image' | 'text') {
+  constructor(config: WaterMarkConfig, wmType: 'image' | 'text') {
     this.config = config
 
     if (wmType === 'image') {
@@ -87,8 +87,8 @@ class PageWaterMark {
     }
 
     this.watermakr.setAttribute('style', style)
-    this.config.target.style.position = 'relative'
-    this.config.target.appendChild(this.watermakr)
+    ;(this.config.target as HTMLElement).style.position = 'relative'
+    ;(this.config.target as HTMLElement).appendChild(this.watermakr)
   }
 
   // 监视水印不被改变
