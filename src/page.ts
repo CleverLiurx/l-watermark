@@ -7,8 +7,10 @@ class PageWaterMark {
 
   constructor(config: WaterMarkConfig, wmType: 'image' | 'text') {
     if (wmType === 'image') {
+      // 将图片添加到页面
       this.observe = image2page(config)
     } else {
+      // 将文字添加到页面
       this.observe = text2page(config)
     }
     this.observe?.start()

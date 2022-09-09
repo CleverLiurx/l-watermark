@@ -1,5 +1,3 @@
-import { WaterMarkConfig } from '../types'
-import { GuardDom } from '../utils'
 
 export const createCanvas: (image: HTMLImageElement) => [HTMLCanvasElement, CanvasRenderingContext2D] = (image) => {
   const { width, height } = image

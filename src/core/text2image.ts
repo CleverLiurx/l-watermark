@@ -14,14 +14,20 @@ export const text2image = async (config: WaterMarkConfig) => {
   const [canvas, ctx] = createCanvas(target as HTMLImageElement)
   const { width, height } = target as HTMLImageElement
 
-  const { width: newImgWidth, height: newImgHeight } = image as HTMLImageElement
+  const imageDom = await url2img(image)
+
+  if (!imageDom) {
+    throw new Error(`An error occurred while loading image (src: ${image} )`)
+  }
+
+  const { width: newImgWidth, height: newImgHeight } = imageDom
 
   ctx.drawImage(target as HTMLImageElement, 0, 0, width, height)
 
   switch (position) {
     case 'center':
       ctx.drawImage(
-        image as HTMLImageElement,
+        imageDom,
         (width - newImgWidth) / 2,
         (height - newImgHeight) / 2,
         newImgWidth,
@@ -29,23 +35,23 @@ export const text2image = async (config: WaterMarkConfig) => {
       )
       break
     case 'topLeft':
-      ctx.drawImage(image as HTMLImageElement, 0, 0, newImgWidth, newImgHeight)
+      ctx.drawImage(imageDom, 0, 0, newImgWidth, newImgHeight)
       break
     case 'topRight':
-      ctx.drawImage(image as HTMLImageElement, width - newImgWidth, 0, newImgWidth, newImgHeight)
+      ctx.drawImage(imageDom, width - newImgWidth, 0, newImgWidth, newImgHeight)
       break
     case 'bottomRight':
-      ctx.drawImage(image as HTMLImageElement, width - newImgWidth, height - newImgHeight, newImgWidth, newImgHeight)
+      ctx.drawImage(imageDom, width - newImgWidth, height - newImgHeight, newImgWidth, newImgHeight)
       break
     case 'bottomLeft':
-      ctx.drawImage(image as HTMLImageElement, 0, height - newImgHeight, newImgWidth, newImgHeight)
+      ctx.drawImage(imageDom, 0, height - newImgHeight, newImgWidth, newImgHeight)
       break
     default:
       let w = 0
       let h = 0
       while (h < height) {
         while (w < width) {
-          ctx.drawImage(image as HTMLImageElement, w, h, newImgWidth, newImgHeight)
+          ctx.drawImage(imageDom, w, h, newImgWidth, newImgHeight)
           w += newImgWidth
         }
         w = 0
