@@ -34,7 +34,7 @@ export interface UserWaterMarkConfig {
   position?: Position
   // 水印被改变时的回调函数（仅当给页面添加水印时生效）
   onchange?(mr?: MutationRecord): void
-    // 添加水印过程发生错误时的回调
+  // 添加水印过程发生错误时的回调
   onerror?(err: string): void
   // 水印添加成功时的回调
   success?(base64?: string): void
