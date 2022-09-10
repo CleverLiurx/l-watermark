@@ -6,8 +6,10 @@ const ImageWatermark: (config: WaterMarkConfig, wmType: 'image' | 'text') => Pro
   wmType
 ) => {
   if (wmType === 'image') {
+    // 给图片添加图片水印
     await image2image(config)
   } else {
+    // 给图片添加文字水印
     text2image(config)
   }
 }

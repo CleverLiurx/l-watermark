@@ -7,15 +7,17 @@ class PageWatermark {
 
   constructor(config: WaterMarkConfig, wmType: 'image' | 'text') {
     if (wmType === 'image') {
-      // 将图片添加到页面
+      // 给页面添加图片水印
       this.observe = image2page(config)
     } else {
-      // 将文字添加到页面
+      // 给页面添加文字水印
       this.observe = text2page(config)
     }
+    // 开始监控水印变化
     this.observe?.start()
   }
 
+  // 停止监控并移除水印
   remove() {
     this.observe?.stop()
   }

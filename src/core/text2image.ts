@@ -1,6 +1,11 @@
 import { WaterMarkConfig } from '../types'
 import { getTextSize, createCanvas } from '../utils'
 
+/**
+ * @description 向图片中添加文字水印
+ * @param config 水印配置
+ */
+
 export const text2image = (config: WaterMarkConfig) => {
   if (config.secret) {
     // 暗水印

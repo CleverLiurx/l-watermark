@@ -1,6 +1,11 @@
 import { WaterMarkConfig } from '../types'
 import { createCanvas, createImage } from '../utils'
 
+/**
+ * @description 向图片中添加图片水印
+ * @param config 水印配置
+ */
+
 export const image2image = async (config: WaterMarkConfig) => {
   // const background = config.target as HTMLImageElement
   const { image, position, target, success, onerror } = config
