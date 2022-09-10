@@ -1,9 +1,9 @@
 import { WaterMarkConfig } from './types'
-import { GuardDom } from './utils'
+import { Guard } from './utils'
 import { text2page, image2page } from './core'
 
-class PageWaterMark {
-  observe?: GuardDom
+class PageWatermark {
+  observe?: Guard
 
   constructor(config: WaterMarkConfig, wmType: 'image' | 'text') {
     if (wmType === 'image') {
@@ -21,4 +21,4 @@ class PageWaterMark {
   }
 }
 
-export default PageWaterMark
+export default PageWatermark

@@ -1,6 +1,7 @@
 // 水印的位置：默认平铺
 type Position = 'repeat' | 'center' | 'bottomRight' | 'bottomLeft' | 'topLeft' | 'topRight'
 
+// 用户的配置
 export interface UserWaterMarkConfig {
   target: HTMLElement | HTMLImageElement | string
   text?: string
@@ -20,6 +21,7 @@ export interface UserWaterMarkConfig {
   success?(base64?: string): void
 }
 
+// 系统配置
 export interface WaterMarkConfig {
   target: HTMLElement | HTMLImageElement
   text: string

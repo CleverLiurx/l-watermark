@@ -1,12 +1,20 @@
 import { WaterMarkConfig, UserWaterMarkConfig } from '../types'
-import { url2img } from './url2img'
+import { createImage } from './createImage'
 
-export const fillConfig: (config: UserWaterMarkConfig) => Promise<WaterMarkConfig> = async (
+/**
+ * @description 根据用户输入的水印配置，生成完整的水印配置
+ *              0. 将string类型的target转换为图片dom元素
+ *              1. 类型转换
+ *              2. 填充默认配置
+ * @param config 用户输入的配置
+ * @returns 水印配置
+ */
+
+export const initConfig: (config: UserWaterMarkConfig) => Promise<WaterMarkConfig> = async (
   config
 ) => {
-  // typeof config.target === 'string' => 图片的url => 给图片加水印 => url转HTMLImageElement
   if (typeof config.target === 'string') {
-    const dom = await url2img(config.target)
+    const dom = await createImage(config.target)
     if (!dom) {
       throw new Error(`An error occurred while loading image (src: ${config.target} )`)
     }
@@ -31,8 +39,6 @@ export const fillConfig: (config: UserWaterMarkConfig) => Promise<WaterMarkConfi
     onerror: config.onerror || (() => console.log('watermark.onerror')),
     success: config.success || (() => console.log('watermark.success')),
   }
-
-  console.log('configs=', configs)
 
   return configs
 }

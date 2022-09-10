@@ -1,5 +1,5 @@
 import { WaterMarkConfig } from '../types'
-import { getTextSize, drawWatermark, observeWatermark } from '../utils'
+import { getTextSize, createWatermark, observeWatermark } from '../utils'
 
 export const text2page = (config: WaterMarkConfig) => {
   const canvas = document.createElement('canvas')
@@ -27,7 +27,7 @@ export const text2page = (config: WaterMarkConfig) => {
   config.imageHeight = canvas.height / dpr
   config.image = canvas.toDataURL()
 
-  const watermark = drawWatermark(config)
+  const watermark = createWatermark(config)
   const observe = observeWatermark(watermark, config)
   return observe
 }

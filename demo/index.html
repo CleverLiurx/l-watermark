@@ -24,10 +24,13 @@
     <script src="../dist/index.umd.js"></script>
     <script>
       window.onload = () => {
-        // WaterMark.init({
-        //   target: document.body,
-        //   image: "./glass15-wm.png",
-        // })
+        WaterMark.init({
+          // target: document.getElementById('demo-image'),
+          target: document.body,
+          // image: "./glass15-wm.png",
+          onerror: (err) => console.log(`onerror: ${err}`)
+          // text: '11111'
+        })
         // new WaterMark({
           // target: document.getElementById("hello_world"),
           // target: document.getElementById('demo-image'),

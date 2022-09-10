@@ -1,8 +1,8 @@
 import { WaterMarkConfig } from '../types'
-import { getTextSize, drawWatermark, observeWatermark } from '../utils'
+import { createWatermark, observeWatermark } from '../utils'
 
 export const image2page = (config: WaterMarkConfig) => {
-  const watermark = drawWatermark(config)
+  const watermark = createWatermark(config)
   const observe = observeWatermark(watermark, config)
   return observe
 }

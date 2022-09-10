@@ -1,5 +1,12 @@
+/**
+ * @description 将图片dom元素转换成canvas
+ * @param image 图片dom元素
+ * @returns [canvas, Context]
+ */
 
-export const createCanvas: (image: HTMLImageElement) => [HTMLCanvasElement, CanvasRenderingContext2D] = (image) => {
+export const createCanvas: (
+  image: HTMLImageElement
+) => [HTMLCanvasElement, CanvasRenderingContext2D] = (image) => {
   const { width, height } = image
 
   const canvas = document.createElement('canvas')

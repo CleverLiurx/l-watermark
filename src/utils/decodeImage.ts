@@ -1,12 +1,17 @@
-// 图片url解密
-export const decodeImage: (url: string) => Promise<string> = async (url) => {
+/**
+ * @description 对加了暗水印的图片进行解密
+ * @param src 图片的src：网络路径、本地路径、base64等合法的src
+ * @returns 解密后的图片的base64
+ */
+
+export const decodeImage: (src: string) => Promise<string> = async (src) => {
   let result = ''
   let width = 0
   let height = 0
 
   const img = new Image()
   img.setAttribute('crossorigin', 'crossorigin')
-  img.src = url
+  img.src = src
 
   const originalData = await new Promise<ImageData | null>((resolve, reject) => {
     img.onload = () => {
@@ -16,13 +21,14 @@ export const decodeImage: (url: string) => Promise<string> = async (url) => {
       canvas.width = width
       canvas.height = height
       const ctx = canvas.getContext('2d')
-      if (ctx) {
-        ctx.drawImage(img, 0, 0)
-        const data = ctx.getImageData(0, 0, width, height)
-        resolve(data)
-      } else {
+
+      if (!ctx) {
         throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
       }
+
+      ctx.drawImage(img, 0, 0)
+      const data = ctx.getImageData(0, 0, width, height)
+      resolve(data)
     }
 
     img.onerror = () => {
@@ -31,7 +37,7 @@ export const decodeImage: (url: string) => Promise<string> = async (url) => {
   })
 
   if (!originalData) {
-    throw new Error(`An error occurred while loading image (src: ${url} )`)
+    throw new Error(`An error occurred while loading image (src: ${src} )`)
   }
 
   const { data } = originalData
@@ -56,12 +62,13 @@ export const decodeImage: (url: string) => Promise<string> = async (url) => {
   canvas.width = width
   canvas.height = height
   const ctx = canvas.getContext('2d')
-  if (ctx) {
-    ctx.putImageData(originalData, 0, 0)
-    result = canvas.toDataURL()
-  } else {
+
+  if (!ctx) {
     throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
   }
+
+  ctx.putImageData(originalData, 0, 0)
+  result = canvas.toDataURL()
 
   return result
 }

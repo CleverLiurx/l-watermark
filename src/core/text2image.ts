@@ -1,64 +1,167 @@
 import { WaterMarkConfig } from '../types'
-import { getTextSize, createCanvas, observeWatermark, url2img } from '../utils'
+import { getTextSize, createCanvas } from '../utils'
 
-export const text2image = async (config: WaterMarkConfig) => {
-  // const background = config.target as HTMLImageElement
-  const {
-    image,
-    position,
-    target,
-    success,
-    onerror
-  } = config
+export const text2image = (config: WaterMarkConfig) => {
+  if (config.secret) {
+    // 暗水印
+    drawEncryptedText(config)
+  } else {
+    // 明水印
+    drawSurfaceText(config)
+  }
+}
 
-  const [canvas, ctx] = createCanvas(target as HTMLImageElement)
-  const { width, height } = target as HTMLImageElement
+const drawEncryptedText: (config: WaterMarkConfig) => void = (config) => {
+  const [canvas, ctx] = createCanvas(config.target as HTMLImageElement)
+  const { width, height } = canvas
 
-  const imageDom = await url2img(image)
+  const targetImageData = ctx.getImageData(0, 0, width, height)
+  const textImageData = _getTextImageData(config, width, height)
+  const watermarkImageData = _mergeImageData(targetImageData, textImageData)
+  ctx.putImageData(watermarkImageData, 0, 0)
+  const base64 = canvas.toDataURL()
+  ;(config.target as HTMLImageElement).src = base64
+  config.success && config.success(base64)
+}
 
-  if (!imageDom) {
-    throw new Error(`An error occurred while loading image (src: ${image} )`)
+const drawSurfaceText: (config: WaterMarkConfig) => void = (config) => {
+  const [canvas, ctx] = createCanvas(config.target as HTMLImageElement)
+  const [textCanvas] = _drawTextToCanvas(canvas, config)
+  const base64 = textCanvas.toDataURL()
+  ;(config.target as HTMLImageElement).src = base64
+  config.success && config.success(base64)
+}
+
+const _getTextImageData: (config: WaterMarkConfig, width: number, height: number) => ImageData = (
+  config,
+  width,
+  height
+) => {
+  let data = new ImageData(1, 1)
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')
+
+  if (!ctx) {
+    throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
   }
 
-  const { width: newImgWidth, height: newImgHeight } = imageDom
+  const [textCanvas, textCtx] = _drawTextToCanvas(canvas, config)
+  data = textCtx.getImageData(0, 0, width, height)
 
-  ctx.drawImage(target as HTMLImageElement, 0, 0, width, height)
+  return data
+}
+
+const _mergeImageData: (targetData: ImageData, textData: ImageData) => ImageData = (
+  targetData,
+  textData
+) => {
+  const oData = targetData.data
+  const tData = textData.data
+
+  let bit = 0
+  let offset = 3
+
+  // switch (rgb) {
+  //   case 'G':
+  //     bit = 1
+  //     offset = 2
+  //     break
+  //   case 'B':
+  //     bit = 2
+  //     offset = 1
+  //     break
+  //   default:
+  //     bit = 0
+  //     offset = 3
+  // }
+
+  for (let i = 0; i < oData.length; i++) {
+    if (i % 4 === bit) {
+      // 对目标通道：文字为空的地方 原图处理为偶数；文字不为空的地方，原图处理为奇数
+      if (tData[i + offset] === 0 && oData[i] % 2 === 1) {
+        // 文字为空为原图为奇数 -> 变为偶数
+        if (oData[i] === 255) {
+          oData[i]--
+        } else {
+          oData[i]++
+        }
+      } else if (tData[i + offset] !== 0 && oData[i] % 2 === 0) {
+        // 文字不为空，原图为偶数 -> 变为奇数
+        oData[i]++
+      }
+    }
+  }
+
+  return targetData
+}
+
+const _drawTextToCanvas: (
+  canvas: HTMLCanvasElement,
+  config: WaterMarkConfig
+) => [HTMLCanvasElement, CanvasRenderingContext2D] = (canvas, config) => {
+  const { position, color, fontSize, cSpace, vSpace, angle, text } = config
+  const targetClone = canvas.cloneNode(true) as HTMLCanvasElement
+  const { width, height } = targetClone
+  const ctx = targetClone.getContext('2d')
+
+  if (!ctx) {
+    throw new Error(`Not exist: document.createElement('canvas').getContext('2d')`)
+  }
+
+  ctx.font = `${fontSize}px microsoft yahei`
+  ctx.fillStyle = color
 
   switch (position) {
     case 'center':
-      ctx.drawImage(
-        imageDom,
-        (width - newImgWidth) / 2,
-        (height - newImgHeight) / 2,
-        newImgWidth,
-        newImgHeight
-      )
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(text, width / 2, height / 2)
       break
     case 'topLeft':
-      ctx.drawImage(imageDom, 0, 0, newImgWidth, newImgHeight)
+      ctx.textAlign = 'left'
+      ctx.textBaseline = 'top'
+      ctx.fillText(text, 0 + cSpace, 0 + vSpace)
       break
     case 'topRight':
-      ctx.drawImage(imageDom, width - newImgWidth, 0, newImgWidth, newImgHeight)
+      ctx.textAlign = 'right'
+      ctx.textBaseline = 'top'
+      ctx.fillText(text, width - cSpace, 0 + vSpace)
       break
     case 'bottomRight':
-      ctx.drawImage(imageDom, width - newImgWidth, height - newImgHeight, newImgWidth, newImgHeight)
+      ctx.textAlign = 'right'
+      ctx.textBaseline = 'bottom'
+      ctx.fillText(text, width - cSpace, height - vSpace)
       break
     case 'bottomLeft':
-      ctx.drawImage(imageDom, 0, height - newImgHeight, newImgWidth, newImgHeight)
+      ctx.textAlign = 'left'
+      ctx.textBaseline = 'bottom'
+      ctx.fillText(text, 0 + cSpace, height - vSpace)
       break
     default:
-      let w = 0
-      let h = 0
-      while (h < height) {
-        while (w < width) {
-          ctx.drawImage(imageDom, w, h, newImgWidth, newImgHeight)
-          w += newImgWidth
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      const { width: textWith } = getTextSize(text, fontSize)
+      const wmWidth = textWith + cSpace
+      const wmHeight = textWith + vSpace
+      ctx.translate(width / 2, height / 2)
+      ctx.rotate((Math.PI / 180) * angle)
+
+      const diagonal = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2))
+
+      let w = -diagonal / 2
+      let h = -diagonal / 2
+
+      while (h < diagonal / 2) {
+        while (w < diagonal / 2) {
+          ctx.fillText(text, w, h)
+          w += wmWidth
         }
-        w = 0
-        h += newImgHeight
+        w = -diagonal / 2
+        h += wmHeight
       }
   }
-  const base64 = canvas.toDataURL()
-  ;(target as HTMLImageElement).src = base64
-  success && success(base64)
+
+  return [targetClone, ctx]
 }

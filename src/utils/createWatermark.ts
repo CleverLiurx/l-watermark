@@ -1,6 +1,11 @@
 import { WaterMarkConfig } from '../types'
 
-export const drawWatermark = (config: WaterMarkConfig) => {
+/**
+ * @description 根据水印的配置生成水印元素，并添加到target中
+ * @param config 水印配置
+ * @returns 生成的水印元素
+ */
+export const createWatermark: (config: WaterMarkConfig) => HTMLDivElement = (config) => {
   const watermark = document.createElement('div')
   watermark.className = 'l-watermark'
 
