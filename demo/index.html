@@ -25,87 +25,10 @@
     <script>
       window.onload = () => {
         WaterMark.init({
-          // target: document.getElementById('demo-image'),
-          target: document.body,
-          // image: "./glass15-wm.png",
-          onerror: (err) => console.log(`onerror: ${err}`)
-          // text: '11111'
+          // target: document.body,
+          text: "Hi, Jack",
+          onerror: (err) => console.log('onerror' + err)
         })
-        // new WaterMark({
-          // target: document.getElementById("hello_world"),
-          // target: document.getElementById('demo-image'),
-          // text: "Internal Data",
-          // fontSize: 60,
-          // image: "./glass15-wm.png",
-          // imageWidth: 50,
-          // imageHeight: 20,
-          // cSpace: 50,
-          // vSpace: 100,
-          // position: 'topLeft'
-        // })
-        // WaterMark.page({
-        //   containerEl: document.body,
-        //   text: "Internal Data",
-        //   color: "rgba(0, 0, 0, 0.4)",
-        //   fontSize: 24
-        // })
-        // WaterMark.page({
-        //   // target: document.getElementById("hello_world"),
-        //   imageWidth: '20',
-        //   imageHeight: '12',
-        //   image: "./glass15-wm.png",
-        //   cSpace: 10,
-        //   vSpace: 50
-        // })
-        // WaterMark.image({
-        //   target: document.getElementById('demo-image'),
-        //   text: 'Angelababy',
-        //   cSpace: 10,
-        //   color: 'rgba(0,0,0,0.6)',
-        //   fontSize: 20,
-        // })
-        // WaterMark.image({
-        //   target: document.getElementById('demo-image'),
-        //   image: "./glass15-wm.png",
-        //   // cSpace: 20,
-        //   // vSpace: 20,
-        //   // imageWidth: 60,
-        //   // imageHeight: 40
-        // })
-        // WaterMark.image({
-        //   target: document.getElementById('demo-image'),
-        //   position: "bottomRight",
-        //   text: '@ GitHub - CleverLiurx',
-        //   color: 'rgba(255, 0, 0, 1)',
-        //   fontSize: 20,
-        //   cSpace: 20,
-        //   vSpace: 10,
-        // })
-        // WaterMark.image({
-        //   target: document.getElementById('demo-image'),
-        //   position: "topLeft",
-        //   image: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/glass15-wm.png",
-        //   imageWidth: 100,
-        //   imageHeight: 60,
-        //   cSpace: 20,
-        //   vSpace: 20,
-        // })
-        // WaterMark.image({
-        //   target: "https://cdn.jsdelivr.net/gh/CleverLiurx/image_repo/ab-v1.0.0-demo.png",
-        //   text: 'Angelababy',
-        //   success: (data) => console.log(data),
-        // })
-        // WaterMark.image({
-        //   target: document.getElementById("demo-image"),
-        //   text: "User Id: 1008611",
-        //   position: 'center',
-        //   secret: true,
-        // })
-        // const decodeImage = async () => {
-        //   const imgDom = document.getElementById("demo-image")
-        //   const decodeSrc = await WaterMark.utils.decodeImage(imgDom.src)
-        //   imgDom.src = decodeSrc
-        // }
       }
     </script>
   </body>

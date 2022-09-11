@@ -6,7 +6,7 @@ import { createCanvas, createImage } from '../utils'
  * @param config 水印配置
  */
 
-export const image2image = async (config: WaterMarkConfig) => {
+export const image2image: (config: WaterMarkConfig) => Promise<void> = async (config) => {
   // const background = config.target as HTMLImageElement
   const { image, position, target, success, onerror } = config
 

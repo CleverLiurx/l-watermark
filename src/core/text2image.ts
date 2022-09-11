@@ -6,7 +6,7 @@ import { getTextSize, createCanvas } from '../utils'
  * @param config 水印配置
  */
 
-export const text2image = (config: WaterMarkConfig) => {
+export const text2image: (config: WaterMarkConfig) => void = (config) => {
   if (config.secret) {
     // 暗水印
     drawEncryptedText(config)

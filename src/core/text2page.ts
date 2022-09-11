@@ -1,5 +1,5 @@
 import { WaterMarkConfig } from '../types'
-import { getTextSize, createWatermark, observeWatermark } from '../utils'
+import { getTextSize, createWatermark, observeWatermark, Guard } from '../utils'
 
 /**
  * @description 向页面中添加文字水印
@@ -7,7 +7,7 @@ import { getTextSize, createWatermark, observeWatermark } from '../utils'
  * @return 监视器observe
  */
 
-export const text2page = (config: WaterMarkConfig) => {
+export const text2page: (config: WaterMarkConfig) => Guard =(config) => {
   const canvas = document.createElement('canvas')
   const { width, height } = getTextSize(config.text, config.fontSize)
   const ctx = canvas.getContext('2d')

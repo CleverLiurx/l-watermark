@@ -4,7 +4,7 @@ import ImageWatermark from './image'
 import { initConfig, decodeImage } from './utils'
 
 class WaterMark {
-  static init: (config: UserWaterMarkConfig) => Promise<void | PageWaterMark> = async (config) => {
+  static init: (config: UserWaterMarkConfig) => Promise<void | { remove: Function }> = async (config) => {
     try {
       // 根据用户输入的配置生成完整的水印配置
       const configs = await initConfig(config)
@@ -14,10 +14,11 @@ class WaterMark {
         await ImageWatermark(configs, configs.image ? 'image' : 'text')
       }
       // 给页面添加水印
-      return new PageWaterMark(configs, configs.image ? 'image' : 'text')
+      return PageWaterMark(configs, configs.image ? 'image' : 'text')
     } catch (err) {
       config.onerror && config.onerror(`${err}`)
     }
+
   }
 
   static utils = {
